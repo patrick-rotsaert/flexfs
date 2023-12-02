@@ -1,8 +1,8 @@
 #pragma once
 
-#include "flexfs/api.h"
-#include "flexfs/i_access.h"
-#include "flexfs/i_interruptor.h"
+#include "flexfs/core/api.h"
+#include "flexfs/core/i_access.h"
+#include "flexfs/core/i_interruptor.h"
 #include <optional>
 
 namespace flexfs {

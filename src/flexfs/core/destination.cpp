@@ -5,7 +5,7 @@
 // http://www.boost.org/LICENSE_1_0.txt)
 //
 
-#include "flexfs/destination.h"
+#include "flexfs/core/destination.h"
 
 namespace flexfs {
 

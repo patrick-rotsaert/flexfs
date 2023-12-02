@@ -8,7 +8,7 @@
 
 #pragma once
 
-#include "flexfs/api.h"
+#include "flexfs/core/api.h"
 
 #define FLEXFS_VERSION_MAJOR ${${PROJECT_NAME}_VERSION_MAJOR}
 #define FLEXFS_VERSION_MINOR ${${PROJECT_NAME}_VERSION_MINOR}

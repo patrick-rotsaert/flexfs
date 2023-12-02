@@ -1,9 +1,9 @@
 #include "flexfs/local/local_watcher.h"
 #include "flexfs/local/local_access.h"
-#include "flexfs/logging.h"
-#include "flexfs/formatters.h"
-#include "flexfs/exceptions.h"
-#include "flexfs/i_interruptor.h"
+#include "flexfs/core/logging.h"
+#include "flexfs/core/formatters.h"
+#include "flexfs/core/exceptions.h"
+#include "flexfs/core/i_interruptor.h"
 #include <boost/thread/interruption.hpp>
 #include <boost/filesystem/operations.hpp>
 #include <boost/algorithm/string/join.hpp>

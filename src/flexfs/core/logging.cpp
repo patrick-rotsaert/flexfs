@@ -5,10 +5,10 @@
 // http://www.boost.org/LICENSE_1_0.txt)
 //
 
-#include "flexfs/logging.h"
-#include "flexfs/config.h"
+#include "flexfs/core/logging.h"
+#include "flexfs/core/config.h"
 #ifdef FLEXFS_USE_SPDLOG
-#include "flexfs/spdlog_logger.h"
+#include "flexfs/core/spdlog_logger.h"
 #endif
 
 namespace flexfs {

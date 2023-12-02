@@ -5,7 +5,7 @@
 // http://www.boost.org/LICENSE_1_0.txt)
 //
 
-#include "flexfs/attributes.h"
+#include "flexfs/core/attributes.h"
 #include <optional>
 #include <sys/types.h>
 #include <sys/stat.h>

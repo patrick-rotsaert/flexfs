@@ -5,14 +5,19 @@
 // http://www.boost.org/LICENSE_1_0.txt)
 //
 
-#include "flexfs/source.h"
+#pragma once
+
+#include "flexfs/core/api.h"
+#include "flexfs/core/fspath.h"
 
 namespace flexfs {
 
-source::source(const fspath& path)
-    : orig_path{ path }
-    , current_path{ path }
+class FLEXFS_EXPORT source
 {
-}
+public:
+	fspath orig_path, current_path;
+
+	explicit source(const fspath& path);
+};
 
 } // namespace flexfs

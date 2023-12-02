@@ -1,6 +1,6 @@
 #include "flexfs/sftp/sftp_file.h"
 #include "flexfs/sftp/sftp_exceptions.h"
-#include "flexfs/logging.h"
+#include "flexfs/core/logging.h"
 
 namespace flexfs {
 namespace sftp {

@@ -1,6 +1,6 @@
 #include "flexfs/sftp/sftp_watcher.h"
-#include "flexfs/logging.h"
-#include "flexfs/formatters.h"
+#include "flexfs/core/logging.h"
+#include "flexfs/core/formatters.h"
 #include <map>
 
 namespace flexfs {

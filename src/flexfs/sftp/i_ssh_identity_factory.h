@@ -1,7 +1,7 @@
 #pragma once
 
 #include "flexfs/sftp/ssh_identity.h"
-#include "flexfs/api.h"
+#include "flexfs/core/api.h"
 #include <memory>
 #include <vector>
 

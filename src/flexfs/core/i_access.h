@@ -7,11 +7,11 @@
 
 #pragma once
 
-#include "flexfs/api.h"
-#include "flexfs/fspath.h"
-#include "flexfs/attributes.h"
-#include "flexfs/i_file.h"
-#include "flexfs/i_watcher.h"
+#include "flexfs/core/api.h"
+#include "flexfs/core/fspath.h"
+#include "flexfs/core/attributes.h"
+#include "flexfs/core/i_file.h"
+#include "flexfs/core/i_watcher.h"
 #include <boost/system/api_config.hpp>
 #include <vector>
 #include <memory>

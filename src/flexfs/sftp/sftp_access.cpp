@@ -3,10 +3,10 @@
 #include "flexfs/sftp/sftp_file.h"
 #include "flexfs/sftp/sftp_watcher.h"
 #include "flexfs/sftp/sftp_session.h"
-#include "flexfs/direntry.h"
-#include "flexfs/attributes.h"
-#include "flexfs/logging.h"
-#include "flexfs/formatters.h"
+#include "flexfs/core/direntry.h"
+#include "flexfs/core/attributes.h"
+#include "flexfs/core/logging.h"
+#include "flexfs/core/formatters.h"
 #include <boost/date_time/posix_time/conversion.hpp>
 #include <optional>
 #include <type_traits>

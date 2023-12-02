@@ -5,19 +5,20 @@
 // http://www.boost.org/LICENSE_1_0.txt)
 //
 
-#pragma once
-
-#include "flexfs/api.h"
-#include "flexfs/fspath.h"
+#include "flexfs/core/i_interruptor.h"
 
 namespace flexfs {
 
-class FLEXFS_EXPORT source
+i_interruptor::~i_interruptor() noexcept
 {
-public:
-	fspath orig_path, current_path;
+}
 
-	explicit source(const fspath& path);
-};
+void i_interruptor::throw_if_interrupted()
+{
+	if (is_interrupted())
+	{
+		BOOST_THROW_EXCEPTION(interrupted_exception{});
+	}
+}
 
 } // namespace flexfs

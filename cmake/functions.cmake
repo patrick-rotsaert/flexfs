@@ -121,9 +121,10 @@ function(add_project_library TARGET)
 			endforeach()
 		endif()
 
-		# Set the common include directory
+		# Set the common include directories
 		target_include_directories(${TARGET} PUBLIC
 			$<BUILD_INTERFACE:${PROJECT_SRC_DIR}>
+			$<BUILD_INTERFACE:${PROJECT_BIN_SRC_DIR}> # for generated headers
 			$<INSTALL_INTERFACE:${CMAKE_INSTALL_INCLUDEDIR}>
 		)
 

@@ -5,20 +5,8 @@
 // http://www.boost.org/LICENSE_1_0.txt)
 //
 
-#include "flexfs/i_interruptor.h"
+#include "flexfs/core/direntry.h"
 
 namespace flexfs {
-
-i_interruptor::~i_interruptor() noexcept
-{
-}
-
-void i_interruptor::throw_if_interrupted()
-{
-	if (is_interrupted())
-	{
-		BOOST_THROW_EXCEPTION(interrupted_exception{});
-	}
-}
 
 } // namespace flexfs

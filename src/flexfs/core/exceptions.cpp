@@ -5,8 +5,8 @@
 // http://www.boost.org/LICENSE_1_0.txt)
 //
 
-#include "flexfs/exceptions.h"
-#include "flexfs/uuid.h"
+#include "flexfs/core/exceptions.h"
+#include "flexfs/core/uuid.h"
 #include <boost/exception/get_error_info.hpp>
 #include <boost/exception/info.hpp>
 #include <boost/uuid/uuid_io.hpp>

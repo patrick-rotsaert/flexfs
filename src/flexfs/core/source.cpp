@@ -5,8 +5,14 @@
 // http://www.boost.org/LICENSE_1_0.txt)
 //
 
-#include "flexfs/direntry.h"
+#include "flexfs/core/source.h"
 
 namespace flexfs {
+
+source::source(const fspath& path)
+    : orig_path{ path }
+    , current_path{ path }
+{
+}
 
 } // namespace flexfs

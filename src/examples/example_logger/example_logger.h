@@ -7,7 +7,7 @@
 
 #pragma once
 
-#include "flexfs/i_logger.h"
+#include "flexfs/core/i_logger.h"
 
 #include <mutex>
 

@@ -1,6 +1,6 @@
 #include "flexfs/local/local_file.h"
-#include "flexfs/exceptions.h"
-#include "flexfs/logging.h"
+#include "flexfs/core/exceptions.h"
+#include "flexfs/core/logging.h"
 
 #include <boost/system/api_config.hpp>
 

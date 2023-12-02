@@ -5,7 +5,7 @@
 // http://www.boost.org/LICENSE_1_0.txt)
 //
 
-#include "flexfs/version.h"
+#include "flexfs/core/version.h"
 
 #include <cassert>
 

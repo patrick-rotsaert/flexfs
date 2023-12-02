@@ -7,7 +7,7 @@
 
 #pragma once
 
-#include "flexfs/api.h"
+#include "flexfs/core/api.h"
 #include <boost/date_time/posix_time/ptime.hpp>
 #include <boost/system/api_config.hpp>
 #include <set>

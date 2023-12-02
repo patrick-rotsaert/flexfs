@@ -6,7 +6,7 @@
 //
 
 #include "example_logger.h"
-#include "flexfs/logging.h"
+#include "flexfs/core/logging.h"
 
 int main()
 {

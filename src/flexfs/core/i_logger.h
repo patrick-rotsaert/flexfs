@@ -7,8 +7,8 @@
 
 #pragma once
 
-#include "flexfs/api.h"
-#include "flexfs/log_level.h"
+#include "flexfs/core/api.h"
+#include "flexfs/core/log_level.h"
 #include <boost/assert/source_location.hpp>
 #include <chrono>
 #include <string_view>

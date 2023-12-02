@@ -1,8 +1,8 @@
 #pragma once
 
 #include "flexfs/sftp/sftp_session.h"
-#include "flexfs/exceptions.h"
-#include "flexfs/api.h"
+#include "flexfs/core/exceptions.h"
+#include "flexfs/core/api.h"
 #include <string>
 #include <libssh/libssh.h>
 #include <libssh/sftp.h>

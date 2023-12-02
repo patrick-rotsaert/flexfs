@@ -5,8 +5,8 @@
 // http://www.boost.org/LICENSE_1_0.txt)
 //
 
-#include "flexfs/spdlog_logger.h"
-#include "flexfs/logging.h"
+#include "flexfs/core/spdlog_logger.h"
+#include "flexfs/core/logging.h"
 
 #include <spdlog/spdlog.h>
 

@@ -1,9 +1,9 @@
 #pragma once
 
 #include "flexfs/sftp/sftp_access.h"
-#include "flexfs/i_watcher.h"
-#include "flexfs/fspath.h"
-#include "flexfs/api.h"
+#include "flexfs/core/i_watcher.h"
+#include "flexfs/core/fspath.h"
+#include "flexfs/core/api.h"
 #include <memory>
 #include <cstddef>
 

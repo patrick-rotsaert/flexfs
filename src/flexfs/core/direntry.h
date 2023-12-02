@@ -7,8 +7,8 @@
 
 #pragma once
 
-#include "flexfs/attributes.h"
-#include "flexfs/api.h"
+#include "flexfs/core/attributes.h"
+#include "flexfs/core/api.h"
 #include <string>
 #include <optional>
 

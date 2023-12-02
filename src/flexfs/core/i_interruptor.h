@@ -7,8 +7,8 @@
 
 #pragma once
 
-#include "flexfs/api.h"
-#include "flexfs/exceptions.h"
+#include "flexfs/core/api.h"
+#include "flexfs/core/exceptions.h"
 #include <chrono>
 
 namespace flexfs {

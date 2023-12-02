@@ -7,8 +7,8 @@
 
 #pragma once
 
-#include "flexfs/api.h"
-#include "flexfs/fspath.h"
+#include "flexfs/core/api.h"
+#include "flexfs/core/fspath.h"
 #include <optional>
 
 namespace flexfs {

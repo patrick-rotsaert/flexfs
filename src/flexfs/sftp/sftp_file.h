@@ -1,10 +1,10 @@
 #pragma once
 
 #include "flexfs/sftp/sftp_session.h"
-#include "flexfs/i_file.h"
-#include "flexfs/i_interruptor.h"
-#include "flexfs/fspath.h"
-#include "flexfs/api.h"
+#include "flexfs/core/i_file.h"
+#include "flexfs/core/i_interruptor.h"
+#include "flexfs/core/fspath.h"
+#include "flexfs/core/api.h"
 #include <memory>
 #include <cstddef>
 

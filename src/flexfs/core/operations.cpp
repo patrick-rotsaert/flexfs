@@ -5,10 +5,10 @@
 // http://www.boost.org/LICENSE_1_0.txt)
 //
 
-#include "flexfs/operations.h"
-#include "flexfs/logging.h"
-#include "flexfs/formatters.h"
-#include "flexfs/exceptions.h"
+#include "flexfs/core/operations.h"
+#include "flexfs/core/logging.h"
+#include "flexfs/core/formatters.h"
+#include "flexfs/core/exceptions.h"
 #include <boost/date_time/posix_time/conversion.hpp>
 #include <boost/date_time/c_local_time_adjustor.hpp>
 #include <boost/scoped_array.hpp>

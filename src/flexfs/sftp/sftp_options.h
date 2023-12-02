@@ -1,6 +1,6 @@
 #pragma once
 
-#include "flexfs/api.h"
+#include "flexfs/core/api.h"
 #include <string>
 #include <optional>
 #include <cstddef>

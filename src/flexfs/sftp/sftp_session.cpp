@@ -1,9 +1,9 @@
 #include "flexfs/sftp/sftp_session.h"
 #include "flexfs/sftp/sftp_exceptions.h"
-#include "flexfs/exceptions.h"
-#include "flexfs/logging.h"
-#include "flexfs/log_level.h"
-#include "flexfs/formatters.h"
+#include "flexfs/core/exceptions.h"
+#include "flexfs/core/logging.h"
+#include "flexfs/core/log_level.h"
+#include "flexfs/core/formatters.h"
 #include <fmt/format.h>
 #include <type_traits>
 #include <cassert>

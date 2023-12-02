@@ -1,9 +1,9 @@
 #pragma once
 
-#include "flexfs/api.h"
-#include "flexfs/i_file.h"
-#include "flexfs/i_interruptor.h"
-#include "flexfs/fspath.h"
+#include "flexfs/core/api.h"
+#include "flexfs/core/i_file.h"
+#include "flexfs/core/i_interruptor.h"
+#include "flexfs/core/fspath.h"
 
 namespace flexfs {
 namespace local {

@@ -5,11 +5,11 @@
 // http://www.boost.org/LICENSE_1_0.txt)
 //
 
-#include "flexfs/i_access.h"
+#include "flexfs/core/i_logger.h"
 
 namespace flexfs {
 
-i_access::~i_access() noexcept
+i_logger::~i_logger()
 {
 }
 

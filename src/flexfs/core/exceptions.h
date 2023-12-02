@@ -7,7 +7,7 @@
 
 #pragma once
 
-#include "flexfs/api.h"
+#include "flexfs/core/api.h"
 #include <boost/exception/exception.hpp>
 #include <boost/exception/error_info.hpp>
 #include <boost/exception/errinfo_nested_exception.hpp>

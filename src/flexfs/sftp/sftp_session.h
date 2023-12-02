@@ -3,8 +3,8 @@
 #include "flexfs/sftp/sftp_options.h"
 #include "flexfs/sftp/i_ssh_knownhosts.h"
 #include "flexfs/sftp/i_ssh_identity_factory.h"
-#include "flexfs/i_interruptor.h"
-#include "flexfs/api.h"
+#include "flexfs/core/i_interruptor.h"
+#include "flexfs/core/api.h"
 #include <memory>
 #include <libssh/libssh.h>
 #include <libssh/sftp.h>

@@ -1,4 +1,4 @@
-#include "flexfs/uuid.h"
+#include "flexfs/core/uuid.h"
 #include <boost/uuid/uuid_generators.hpp>
 
 namespace flexfs {

@@ -1,10 +1,10 @@
 #include "flexfs/local/local_access.h"
 #include "flexfs/local/local_file.h"
 #include "flexfs/local/local_watcher.h"
-#include "flexfs/logging.h"
-#include "flexfs/formatters.h"
-#include "flexfs/direntry.h"
-#include "flexfs/exceptions.h"
+#include "flexfs/core/logging.h"
+#include "flexfs/core/formatters.h"
+#include "flexfs/core/direntry.h"
+#include "flexfs/core/exceptions.h"
 
 #include <boost/filesystem/operations.hpp>
 #include <boost/date_time/posix_time/conversion.hpp>

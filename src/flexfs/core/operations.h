@@ -7,11 +7,11 @@
 
 #pragma once
 
-#include "flexfs/api.h"
-#include "flexfs/i_access.h"
-#include "flexfs/fspath.h"
-#include "flexfs/source.h"
-#include "flexfs/destination.h"
+#include "flexfs/core/api.h"
+#include "flexfs/core/i_access.h"
+#include "flexfs/core/fspath.h"
+#include "flexfs/core/source.h"
+#include "flexfs/core/destination.h"
 #include <functional>
 #include <cstddef>
 

@@ -7,18 +7,19 @@
 
 #pragma once
 
-#include "flexfs/api.h"
-#include <cstdint>
+#include "flexfs/core/api.h"
+#include "flexfs/core/direntry.h"
+#include <vector>
+#include <memory>
 
 namespace flexfs {
 
-class FLEXFS_EXPORT i_file
+class FLEXFS_EXPORT i_watcher
 {
 public:
-	virtual ~i_file() noexcept = default;
+	virtual ~i_watcher() noexcept = default;
 
-	virtual std::size_t read(void* buf, std::size_t count)        = 0;
-	virtual std::size_t write(const void* buf, std::size_t count) = 0;
+	virtual std::vector<direntry> watch() = 0;
 };
 
 } // namespace flexfs

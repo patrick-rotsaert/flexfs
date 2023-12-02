@@ -7,9 +7,9 @@
 
 #pragma once
 
-#include "flexfs/api.h"
-#include "flexfs/i_logger.h"
-#include "flexfs/config.h"
+#include "flexfs/core/api.h"
+#include "flexfs/core/i_logger.h"
+#include "flexfs/core/config.h"
 #include <fmt/format.h>
 #include <boost/assert/source_location.hpp>
 #include <memory>
