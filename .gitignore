@@ -1,0 +1,6 @@
+/.vscode/
+/.cache/
+/CMakeLists.txt.user
+/compile_commands.json
+/.pat
+/_build/

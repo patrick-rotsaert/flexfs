@@ -1,0 +1,16 @@
+//
+// Copyright (C) 2023 Patrick Rotsaert
+// Distributed under the Boost Software License, Version 1.0.
+// (See accompanying file LICENSE or copy at
+// http://www.boost.org/LICENSE_1_0.txt)
+//
+// clang-format off
+
+#pragma once
+
+#cmakedefine FLEXFS_USE_SPDLOG
+
+// Logging verbosity of the library
+// Values are as in spider/log_level.h
+#define FLEXFS_LOGGING_LEVEL @FLEXFS_LOGGING_LEVEL@
+
