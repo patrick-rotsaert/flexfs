@@ -23,7 +23,7 @@ example_logger::~example_logger()
 
 void example_logger::log_message(const std::chrono::system_clock::time_point& time,
                                  const boost::source_location& /*location*/,
-                                 flexfs::log_level     level,
+                                 flexfs::log_level       level,
                                  const std::string_view& message)
 {
 	std::unique_lock lock{ this->mutex_ };

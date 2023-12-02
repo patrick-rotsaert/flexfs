@@ -44,7 +44,7 @@ std::size_t file::read(void* buf, std::size_t count)
 	auto rc = c_read(this->fd_, buf, count);
 	if (rc < 0)
 	{
-		FLEXFS_THROW(system_exception{} << error_opname{"read"}   << error_path{this->path_}  );
+		FLEXFS_THROW(system_exception{} << error_opname{ "read" } << error_path{ this->path_ });
 	}
 	return static_cast<std::size_t>(rc);
 }
@@ -56,7 +56,7 @@ std::size_t file::write(const void* buf, std::size_t count)
 	auto rc = c_write(this->fd_, buf, count);
 	if (rc < 0)
 	{
-		FLEXFS_THROW(system_exception{} << error_opname{"write"}   << error_path{this->path_}  );
+		FLEXFS_THROW(system_exception{} << error_opname{ "write" } << error_path{ this->path_ });
 	}
 	return static_cast<std::size_t>(rc);
 }

@@ -83,9 +83,6 @@ add_project_library(core
 		log_level.h
 		i_logger.h
 		logging.h
-#	PUBLIC_INCLUDE_DIRS
-#		${CMAKE_CURRENT_SOURCE_DIR}/..
-#		${CMAKE_CURRENT_BINARY_DIR}/..
 	PRIVATE_LIBRARIES
 		fmt::fmt
 		Boost::filesystem

@@ -21,6 +21,6 @@ public:
 
 	void log_message(const std::chrono::system_clock::time_point& time,
 	                 const boost::source_location&                location,
-	                 flexfs::log_level                          level,
+	                 flexfs::log_level                            level,
 	                 const std::string_view&                      message) override;
 };

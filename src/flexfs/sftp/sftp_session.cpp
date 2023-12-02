@@ -80,7 +80,7 @@ public:
 	{
 		if (ssh_connect(this->session_.get()) != SSH_OK)
 		{
-			FLEXFS_THROW(ssh_exception(this->session_.get()) << error_opname{"ssh_connect"}  );
+			FLEXFS_THROW(ssh_exception(this->session_.get()) << error_opname{ "ssh_connect" });
 		}
 	}
 
@@ -101,7 +101,7 @@ public:
 		const auto rc  = ssh_get_server_publickey(session.get(), &key);
 		if (rc < 0)
 		{
-			FLEXFS_THROW(ssh_exception(session.get()) << error_opname{"ssh_get_server_publickey"}  );
+			FLEXFS_THROW(ssh_exception(session.get()) << error_opname{ "ssh_get_server_publickey" });
 		}
 		this->key_ = ssh_key_ptr{ key, ssh_key_free };
 	}
@@ -124,7 +124,7 @@ public:
 		const auto     rc   = ssh_get_publickey_hash(key.get(), type, &hash, &hlen);
 		if (rc < 0)
 		{
-			FLEXFS_THROW(ssh_exception(session.get()) << error_opname{"ssh_get_publickey_hash"}  );
+			FLEXFS_THROW(ssh_exception(session.get()) << error_opname{ "ssh_get_publickey_hash" });
 		}
 		assert(hash);
 		auto hexa = ssh_get_hexa(hash, hlen);
@@ -151,12 +151,12 @@ public:
 		const auto rc  = ssh_pki_import_privkey_base64(b64.c_str(), nullptr, nullptr, nullptr, &key);
 		if (rc != SSH_OK)
 		{
-			FLEXFS_THROW(ssh_exception{} << error_opname{"ssh_pki_import_privkey_base64"}  );
+			FLEXFS_THROW(ssh_exception{} << error_opname{ "ssh_pki_import_privkey_base64" });
 		}
 		const auto keyptr = ssh_key_ptr{ key, ssh_key_free };
 		if (!ssh_key_is_private(key))
 		{
-			FLEXFS_THROW(ssh_exception{} << error_mesg{"Not a private key"}   << error_opname{"ssh_key_is_private"}  );
+			FLEXFS_THROW(ssh_exception{} << error_mesg{ "Not a private key" } << error_opname{ "ssh_key_is_private" });
 		}
 		this->key_ = keyptr;
 	}
@@ -178,7 +178,7 @@ public:
 		const auto rc  = ssh_pki_export_privkey_to_pubkey(pkey.key().get(), &key);
 		if (rc != SSH_OK)
 		{
-			FLEXFS_THROW(ssh_exception{} << error_opname{"ssh_pki_export_privkey_to_pubkey"}  );
+			FLEXFS_THROW(ssh_exception{} << error_opname{ "ssh_pki_export_privkey_to_pubkey" });
 		}
 		this->key_ = ssh_key_ptr{ key, ssh_key_free };
 		assert(ssh_key_is_public(key));
@@ -223,7 +223,7 @@ public:
 		ssh_session_ptr ssh(ssh_new(), ssh_free);
 		if (!ssh)
 		{
-			FLEXFS_THROW(ssh_exception("ssh_new() returned nullptr") << error_opname{"ssh_new"}  );
+			FLEXFS_THROW(ssh_exception("ssh_new() returned nullptr") << error_opname{ "ssh_new" });
 		}
 
 		auto cb                    = ssh_callbacks_struct{};
@@ -270,7 +270,7 @@ public:
 				else
 				{
 					FLEXFS_THROW(ssh_host_key_unknown("Unknown SSH host")
-					           << ssh_host_key_unknown::ssh_host(opts.host) << ssh_host_key_unknown::ssh_host_pubkey_hash(hash.hash()));
+					             << ssh_host_key_unknown::ssh_host(opts.host) << ssh_host_key_unknown::ssh_host_pubkey_hash(hash.hash()));
 				}
 				break;
 			case i_ssh_known_hosts::result::CHANGED:
@@ -282,7 +282,7 @@ public:
 				else
 				{
 					FLEXFS_THROW(ssh_host_key_changed("SSH host key changed")
-					           << ssh_host_key_changed::ssh_host(opts.host) << ssh_host_key_changed::ssh_host_pubkey_hash(hash.hash()));
+					             << ssh_host_key_changed::ssh_host(opts.host) << ssh_host_key_changed::ssh_host_pubkey_hash(hash.hash()));
 				}
 				break;
 			}
@@ -297,7 +297,7 @@ public:
 			// NOTE: ssh_userauth_list requires the function ssh_userauth_none() to be called before the methods are available.
 			if (ssh_userauth_none(ssh.get(), nullptr) == SSH_AUTH_ERROR)
 			{
-				FLEXFS_THROW(ssh_exception("Unexpected error") << error_opname{"ssh_userauth_none"}  );
+				FLEXFS_THROW(ssh_exception("Unexpected error") << error_opname{ "ssh_userauth_none" });
 			}
 
 			const auto methods       = ssh_userauth_list(ssh.get(), nullptr);
@@ -340,7 +340,7 @@ public:
 						}
 						else if (rc == SSH_AUTH_ERROR)
 						{
-							FLEXFS_THROW(ssh_auth_exception(ssh.get()) << error_opname{"ssh_userauth_publickey"}  );
+							FLEXFS_THROW(ssh_auth_exception(ssh.get()) << error_opname{ "ssh_userauth_publickey" });
 						}
 						else
 						{
@@ -354,7 +354,7 @@ public:
 					}
 					else if (rc == SSH_AUTH_ERROR)
 					{
-						FLEXFS_THROW(ssh_auth_exception(ssh.get()) << error_opname{"ssh_userauth_try_publickey"}  );
+						FLEXFS_THROW(ssh_auth_exception(ssh.get()) << error_opname{ "ssh_userauth_try_publickey" });
 					}
 					else
 					{
@@ -395,14 +395,14 @@ public:
 		const auto sftp = sftp_session_ptr{ sftp_new(ssh.get()), sftp_free };
 		if (!sftp)
 		{
-			FLEXFS_THROW(ssh_exception("sftp_new() returned nullptr") << error_opname{"sftp_new"}  );
+			FLEXFS_THROW(ssh_exception("sftp_new() returned nullptr") << error_opname{ "sftp_new" });
 		}
 
 		{
 			const auto rc = sftp_init(sftp.get());
 			if (rc != SSH_OK)
 			{
-				FLEXFS_THROW(sftp_exception(ssh.get(), sftp.get()) << error_opname{"sftp_init"}  );
+				FLEXFS_THROW(sftp_exception(ssh.get(), sftp.get()) << error_opname{ "sftp_init" });
 			}
 		}
 

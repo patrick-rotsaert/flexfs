@@ -26,7 +26,7 @@ std::size_t file::read(void* buf, std::size_t count)
 	const auto rc = sftp_read(this->fd_, buf, count);
 	if (rc < 0)
 	{
-		FLEXFS_THROW(sftp_exception(this->session_) << error_opname{"sftp_read"}   << error_path{this->path_}  );
+		FLEXFS_THROW(sftp_exception(this->session_) << error_opname{ "sftp_read" } << error_path{ this->path_ });
 	}
 	return static_cast<std::size_t>(rc);
 }
@@ -38,7 +38,7 @@ std::size_t file::write(const void* buf, std::size_t count)
 	const auto rc = sftp_write(this->fd_, buf, count);
 	if (rc < 0)
 	{
-		FLEXFS_THROW(sftp_exception(this->session_) << error_opname{"sftp_write"}   << error_path{this->path_}  );
+		FLEXFS_THROW(sftp_exception(this->session_) << error_opname{ "sftp_write" } << error_path{ this->path_ });
 	}
 	return static_cast<std::size_t>(rc);
 }

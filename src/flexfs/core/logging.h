@@ -32,11 +32,11 @@ public:
 #define fslog(lvl, ...)                                                                                                                    \
 	do                                                                                                                                     \
 	{                                                                                                                                      \
-		auto& logger = ::flexfs::logging::logger;                                                                                        \
+		auto& logger = ::flexfs::logging::logger;                                                                                          \
 		if (logger)                                                                                                                        \
 		{                                                                                                                                  \
 			logger->log_message(                                                                                                           \
-			    std::chrono::system_clock::now(), BOOST_CURRENT_LOCATION, ::flexfs::log_level::lvl, fmt::format(__VA_ARGS__));           \
+			    std::chrono::system_clock::now(), BOOST_CURRENT_LOCATION, ::flexfs::log_level::lvl, fmt::format(__VA_ARGS__));             \
 		}                                                                                                                                  \
 	} while (false)
 
@@ -45,7 +45,7 @@ public:
 #define FLEXFS_MIN_LOG(minlvl, lvl, ...)                                                                                                   \
 	do                                                                                                                                     \
 	{                                                                                                                                      \
-		if constexpr (::flexfs::log_level::lvl >= ::flexfs::log_level::minlvl)                                                         \
+		if constexpr (::flexfs::log_level::lvl >= ::flexfs::log_level::minlvl)                                                             \
 		{                                                                                                                                  \
 			slog(lvl, __VA_ARGS__);                                                                                                        \
 		}                                                                                                                                  \
