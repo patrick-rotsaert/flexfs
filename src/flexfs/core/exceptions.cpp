@@ -27,28 +27,28 @@ exception::exception() noexcept
 }
 
 exception::exception(std::error_code ec) noexcept
+    : exception{}
 {
 	*this << error_code{ ec };
 	*this << error_mesg{ ec.message() };
-	*this << error_uuid{ uuid::generate() };
 }
 
 exception::exception(const std::string& message) noexcept
+    : exception{}
 {
 	*this << error_mesg{ message };
-	*this << error_uuid{ uuid::generate() };
 }
 
 exception::exception(std::error_code ec, const std::string& message) noexcept
+    : exception{}
 {
 	*this << error_code{ ec };
 	*this << error_mesg{ fmt::format("{}: {}", message, ec.message()) };
-	*this << error_uuid{ uuid::generate() };
 }
 
 const char* exception::what() const noexcept
 {
-	const auto message = boost::get_error_info<mesg>(*this);
+	const auto message = boost::get_error_info<error_mesg>(*this);
 	if (message)
 	{
 		return message->c_str();
