@@ -159,8 +159,11 @@ bool attributes::is_lnk() const
 
 mode_t attributes::get_mode() const
 {
-	return convert_file_perm(this->uperm, S_IRUSR, S_IWUSR, S_IXUSR) | convert_file_perm(this->gperm, S_IRGRP, S_IWGRP, S_IXGRP) |
-	       convert_file_perm(this->operm, S_IROTH, S_IWOTH, S_IXOTH) | convert_file_mode(this->mode) | convert_file_type(this->type);
+	return convert_file_perm(this->uperm, S_IRUSR, S_IWUSR, S_IXUSR) | //
+	       convert_file_perm(this->gperm, S_IRGRP, S_IWGRP, S_IXGRP) | //
+	       convert_file_perm(this->operm, S_IROTH, S_IWOTH, S_IXOTH) | //
+	       convert_file_mode(this->mode) |                             //
+	       convert_file_type(this->type);
 }
 
 void attributes::set_mode(mode_t mode)

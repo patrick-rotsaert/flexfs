@@ -83,6 +83,8 @@ add_project_library(core
 		log_level.h
 		i_logger.h
 		logging.h
+	UNIT_TEST_SOURCES
+		test/unit/test_attributes.cpp
 	PRIVATE_LIBRARIES
 		fmt::fmt
 		Boost::filesystem
