@@ -12,7 +12,7 @@
 #include <boost/system/api_config.hpp>
 #include <set>
 #include <string>
-#include <cstdint>
+#include <cstddef>
 #include <optional>
 
 #include <sys/stat.h>
@@ -37,6 +37,9 @@
 #define S_IROTH 00004
 #define S_IWOTH 00002
 #define S_IXOTH 00001
+
+using uid_t = std::uint32_t; // TODO: verify
+using gid_t = std::uint32_t; // TODO: verify
 #endif
 
 namespace flexfs {
@@ -80,8 +83,9 @@ public:
 	filetype                                type;
 	filemodes                               mode;
 	fileperms                               uperm, gperm, operm;
-	std::optional<std::int64_t>             size;
-	std::optional<std::uint32_t>            uid, gid; // FIXME: type
+	std::optional<uintmax_t>                size;
+	std::optional<uid_t>                    uid;
+	std::optional<gid_t>                    gid;
 	std::optional<std::string>              owner, group;
 	std::optional<boost::posix_time::ptime> atime, mtime, ctime;
 
@@ -93,9 +97,10 @@ public:
 
 	bool is_dir() const;
 	bool is_reg() const;
+	bool is_lnk() const;
 
-	std::uint32_t              get_mode() const;
-	void                       set_mode(std::uint32_t st_mode);
+	mode_t                     get_mode() const;
+	void                       set_mode(mode_t mode);
 	std::string                mode_string() const;
 	std::optional<std::string> owner_or_uid() const;
 	std::optional<std::string> group_or_gid() const;

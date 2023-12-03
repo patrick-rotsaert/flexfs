@@ -14,10 +14,10 @@ namespace flexfs {
 
 namespace {
 
-attributes::filetype convert_file_type(std::uint32_t st_mode)
+attributes::filetype convert_file_type(mode_t mode)
 {
 	using filetype = attributes::filetype;
-	switch (st_mode & S_IFMT)
+	switch (mode & S_IFMT)
 	{
 	case S_IFBLK:
 		return filetype::BLOCK;
@@ -39,114 +39,144 @@ attributes::filetype convert_file_type(std::uint32_t st_mode)
 	return filetype::UNKNOWN;
 }
 
-attributes::filemodes convert_file_mode(std::uint32_t st_mode)
+mode_t convert_file_type(attributes::filetype type)
+{
+	using filetype = attributes::filetype;
+	switch (type)
+	{
+	case filetype::BLOCK:
+		return S_IFBLK;
+	case filetype::CHAR:
+		return S_IFCHR;
+	case filetype::DIR:
+		return S_IFDIR;
+	case filetype::FIFO:
+		return S_IFIFO;
+	case filetype::LINK:
+		return S_IFLNK;
+	case filetype::FILE:
+		return S_IFREG;
+	case filetype::SOCK:
+		return S_IFSOCK;
+	default:
+		break;
+	}
+	return 0;
+}
+
+attributes::filemodes convert_file_mode(mode_t mode)
 {
 	using filemode = attributes::filemode;
 	auto result    = std::set<attributes::filemode>{};
-	if (st_mode & S_ISUID)
+	if (mode & S_ISUID)
 	{
 		result.insert(filemode::SET_UID);
 	}
-	if (st_mode & S_ISGID)
+	if (mode & S_ISGID)
 	{
 		result.insert(filemode::SET_GID);
 	}
-	if (st_mode & S_ISVTX)
+	if (mode & S_ISVTX)
 	{
 		result.insert(filemode::STICKY);
 	}
 	return result;
 }
 
-std::uint32_t convert_file_mode(const attributes::filemodes& mode)
+mode_t convert_file_mode(const attributes::filemodes& modes)
 {
 	using filemode = attributes::filemode;
-	auto st_mode   = std::uint32_t{};
-	if (mode.count(filemode::SET_UID))
+	auto mode      = mode_t{};
+	if (modes.count(filemode::SET_UID))
 	{
-		st_mode |= S_ISUID;
+		mode |= S_ISUID;
 	}
-	if (mode.count(filemode::SET_GID))
+	if (modes.count(filemode::SET_GID))
 	{
-		st_mode |= S_ISGID;
+		mode |= S_ISGID;
 	}
-	if (mode.count(filemode::STICKY))
+	if (modes.count(filemode::STICKY))
 	{
-		st_mode |= S_ISVTX;
+		mode |= S_ISVTX;
 	}
-	return st_mode;
+	return mode;
 }
 
-attributes::fileperms convert_file_perm(std::uint32_t st_mode, std::uint32_t r, std::uint32_t w, std::uint32_t x)
+attributes::fileperms convert_file_perm(mode_t mode, mode_t r, mode_t w, mode_t x)
 {
 	using fileperm = attributes::fileperm;
 	auto result    = attributes::fileperms{};
-	if (st_mode & r)
+	if (mode & r)
 	{
 		result.insert(fileperm::READ);
 	}
-	if (st_mode & w)
+	if (mode & w)
 	{
 		result.insert(fileperm::WRITE);
 	}
-	if (st_mode & x)
+	if (mode & x)
 	{
 		result.insert(fileperm::EXEC);
 	}
 	return result;
 }
 
-std::uint32_t convert_file_perm(const attributes::fileperms& perm, std::uint32_t r, std::uint32_t w, std::uint32_t x)
+mode_t convert_file_perm(const attributes::fileperms& perm, mode_t r, mode_t w, mode_t x)
 {
 	using fileperm = attributes::fileperm;
-	auto st_mode   = std::uint32_t{};
+	auto mode      = mode_t{};
 	if (perm.count(fileperm::READ))
 	{
-		st_mode |= r;
+		mode |= r;
 	}
 	if (perm.count(fileperm::WRITE))
 	{
-		st_mode |= w;
+		mode |= w;
 	}
 	if (perm.count(fileperm::EXEC))
 	{
-		st_mode |= x;
+		mode |= x;
 	}
-	return st_mode;
+	return mode;
 }
 
 } // namespace
 
 bool attributes::is_dir() const
 {
-	return type == filetype::DIR;
+	return this->type == filetype::DIR;
 }
 
 bool attributes::is_reg() const
 {
-	return type == filetype::REG;
+	return this->type == filetype::REG;
 }
 
-uint32_t attributes::get_mode() const
+bool attributes::is_lnk() const
 {
-	return convert_file_perm(uperm, S_IRUSR, S_IWUSR, S_IXUSR) | convert_file_perm(gperm, S_IRGRP, S_IWGRP, S_IXGRP) |
-	       convert_file_perm(operm, S_IROTH, S_IWOTH, S_IXOTH) | convert_file_mode(mode);
+	return this->type == filetype::LNK;
 }
 
-void attributes::set_mode(std::uint32_t st_mode)
+mode_t attributes::get_mode() const
 {
-	//fslog(debug, "st_mode={0:o}", st_mode);
-	type  = convert_file_type(st_mode);
-	mode  = convert_file_mode(st_mode);
-	uperm = convert_file_perm(st_mode, S_IRUSR, S_IWUSR, S_IXUSR);
-	gperm = convert_file_perm(st_mode, S_IRGRP, S_IWGRP, S_IXGRP);
-	operm = convert_file_perm(st_mode, S_IROTH, S_IWOTH, S_IXOTH);
+	return convert_file_perm(this->uperm, S_IRUSR, S_IWUSR, S_IXUSR) | convert_file_perm(this->gperm, S_IRGRP, S_IWGRP, S_IXGRP) |
+	       convert_file_perm(this->operm, S_IROTH, S_IWOTH, S_IXOTH) | convert_file_mode(this->mode) | convert_file_type(this->type);
+}
+
+void attributes::set_mode(mode_t mode)
+{
+	//fslog(debug, "mode={0:o}", mode);
+	this->type  = convert_file_type(mode);
+	this->mode  = convert_file_mode(mode);
+	this->uperm = convert_file_perm(mode, S_IRUSR, S_IWUSR, S_IXUSR);
+	this->gperm = convert_file_perm(mode, S_IRGRP, S_IWGRP, S_IXGRP);
+	this->operm = convert_file_perm(mode, S_IROTH, S_IWOTH, S_IXOTH);
 }
 
 std::string attributes::mode_string() const
 {
 	char buf[10], *p = buf;
-	switch (type)
+	switch (this->type)
 	{
 	case filetype::BLOCK:
 		*p++ = 'b';
@@ -176,27 +206,27 @@ std::string attributes::mode_string() const
 		*p++ = '?';
 		break;
 	}
-	*p++ = uperm.count(fileperm::READ) ? 'r' : '-';
-	*p++ = uperm.count(fileperm::WRITE) ? 'w' : '-';
-	*p++ = uperm.count(fileperm::EXEC) ? 'x' : '-';
-	*p++ = gperm.count(fileperm::READ) ? 'r' : '-';
-	*p++ = gperm.count(fileperm::WRITE) ? 'w' : '-';
-	*p++ = gperm.count(fileperm::EXEC) ? 'x' : '-';
-	*p++ = operm.count(fileperm::READ) ? 'r' : '-';
-	*p++ = operm.count(fileperm::WRITE) ? 'w' : '-';
-	*p++ = operm.count(fileperm::EXEC) ? 'x' : '-';
+	*p++ = this->uperm.count(fileperm::READ) ? 'r' : '-';
+	*p++ = this->uperm.count(fileperm::WRITE) ? 'w' : '-';
+	*p++ = this->uperm.count(fileperm::EXEC) ? 'x' : '-';
+	*p++ = this->gperm.count(fileperm::READ) ? 'r' : '-';
+	*p++ = this->gperm.count(fileperm::WRITE) ? 'w' : '-';
+	*p++ = this->gperm.count(fileperm::EXEC) ? 'x' : '-';
+	*p++ = this->operm.count(fileperm::READ) ? 'r' : '-';
+	*p++ = this->operm.count(fileperm::WRITE) ? 'w' : '-';
+	*p++ = this->operm.count(fileperm::EXEC) ? 'x' : '-';
 	return std::string{ buf, sizeof(buf) };
 }
 
 std::optional<std::string> attributes::owner_or_uid() const
 {
-	if (owner)
+	if (this->owner)
 	{
-		return owner.value();
+		return this->owner.value();
 	}
-	else if (uid)
+	else if (this->uid)
 	{
-		return std::to_string(uid.value());
+		return std::to_string(this->uid.value());
 	}
 	else
 	{
@@ -206,13 +236,13 @@ std::optional<std::string> attributes::owner_or_uid() const
 
 std::optional<std::string> attributes::group_or_gid() const
 {
-	if (group)
+	if (this->group)
 	{
-		return group.value();
+		return this->group.value();
 	}
-	else if (gid)
+	else if (this->gid)
 	{
-		return std::to_string(gid.value());
+		return std::to_string(this->gid.value());
 	}
 	else
 	{

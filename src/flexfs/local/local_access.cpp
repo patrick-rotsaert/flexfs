@@ -157,23 +157,12 @@ direntry make_direntry(const fspath& path, const boost::filesystem::file_status&
 
 	if (st.type() == boost::filesystem::symlink_file)
 	{
-		fslog(trace, "status path={}", path);
-		auto ec    = boost::system::error_code{};
-		auto stlnk = boost::filesystem::directory_entry(path).status(ec);
-		// stat fails with ENOENT if a dead link is encountered, which is non-critical
-		if (ec != boost::system::errc::no_such_file_or_directory)
+		fslog(trace, "read_symlink path={}", path);
+		auto ec               = boost::system::error_code{};
+		result.symlink_target = boost::filesystem::read_symlink(path, ec);
+		if (ec)
 		{
-			FLEXFS_THROW(system_exception(std::error_code{ ec }) << error_path{ path } << error_opname{ "status" });
-		}
-		else
-		{
-			const auto target = boost::filesystem::read_symlink(path, ec);
-			if (ec)
-			{
-				FLEXFS_THROW(system_exception(std::error_code{ ec }) << error_path{ path } << error_opname{ "read_symlink" });
-			}
-			result.link.emplace();
-			result.link.value() = make_attributes(target, stlnk);
+			FLEXFS_THROW(system_exception(std::error_code{ ec }) << error_path{ path } << error_opname{ "read_symlink" });
 		}
 	}
 

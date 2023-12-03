@@ -23,8 +23,8 @@ namespace {
 
 fspath make_dest_path(std::shared_ptr<i_access> access, const source& source, const destination& dest)
 {
-	auto newpath = dest.path;
-	if (newpath.empty())
+	auto new_path = dest.path;
+	if (new_path.empty())
 	{
 		FLEXFS_THROW(should_not_happen_exception{} << error_mesg{ "destination path cannot be empty" });
 	}
@@ -37,18 +37,18 @@ fspath make_dest_path(std::shared_ptr<i_access> access, const source& source, co
 			const auto tm      = boost::posix_time::to_tm(dest.expand_time_placeholders.value() == destination::time_expansion::LOCAL
                                                          ? adjustor::utc_to_local(mtime.value())
                                                          : mtime.value());
-			auto       bufsize = newpath.string().length();
+			auto       bufsize = new_path.string().length();
 			for (;;)
 			{
 				boost::scoped_array<char> buf(new char[bufsize]);
-				const auto                length = strftime(buf.get(), bufsize, newpath.string().c_str(), &tm);
+				const auto                length = strftime(buf.get(), bufsize, new_path.string().c_str(), &tm);
 				if (length == 0)
 				{
 					bufsize *= 2;
 				}
 				else
 				{
-					newpath = std::string(buf.get(), length);
+					new_path = std::string(buf.get(), length);
 					break;
 				}
 			}
@@ -58,7 +58,7 @@ fspath make_dest_path(std::shared_ptr<i_access> access, const source& source, co
 			fslog(warn, "Cannot get mtime of {}", source.current_path);
 		}
 	}
-	auto attr = access->try_stat(newpath);
+	auto attr = access->try_stat(new_path);
 	if (attr)
 	{
 		// newpath exists
@@ -70,27 +70,27 @@ fspath make_dest_path(std::shared_ptr<i_access> access, const source& source, co
 			case destination::conflict_policy::AUTORENAME:
 			{
 				auto       i    = 0;
-				const auto orig = newpath;
+				const auto orig = new_path;
 				do
 				{
-					newpath = orig.parent_path() /
-					          fmt::format("{}~{}{}", orig.filename().stem().string(), ++i, orig.filename().extension().string());
-				} while (access->exists(newpath));
+					new_path = orig.parent_path() /
+					           fmt::format("{}~{}{}", orig.filename().stem().string(), ++i, orig.filename().extension().string());
+				} while (access->exists(new_path));
 				break;
 			}
 			case destination::conflict_policy::FAIL:
-				FLEXFS_THROW(system_exception{ std::error_code(EEXIST, std::system_category()) } << error_path{ newpath });
+				FLEXFS_THROW(system_exception{ std::error_code(EEXIST, std::system_category()) } << error_path{ new_path });
 			}
 		};
 		if (attr->is_dir())
 		{
-			newpath /= source.orig_path.filename();
-			attr = access->try_stat(newpath);
+			new_path /= source.orig_path.filename();
+			attr = access->try_stat(new_path);
 			if (attr)
 			{
 				if (attr->is_dir())
 				{
-					FLEXFS_THROW(system_exception{ std::error_code(EISDIR, std::system_category()) } << error_path{ newpath });
+					FLEXFS_THROW(system_exception{ std::error_code(EISDIR, std::system_category()) } << error_path{ new_path });
 				}
 				else
 				{
@@ -99,9 +99,9 @@ fspath make_dest_path(std::shared_ptr<i_access> access, const source& source, co
 				}
 			}
 		}
-		else if (newpath.string().back() == '/')
+		else if (new_path.string().back() == '/')
 		{
-			FLEXFS_THROW(system_exception{ std::error_code(ENOTDIR, std::system_category()) } << error_path{ newpath });
+			FLEXFS_THROW(system_exception{ std::error_code(ENOTDIR, std::system_category()) } << error_path{ new_path });
 		}
 		else
 		{
@@ -111,13 +111,13 @@ fspath make_dest_path(std::shared_ptr<i_access> access, const source& source, co
 	else
 	{
 		// newpath does not exist
-		if (newpath.string().back() == '/')
+		if (new_path.string().back() == '/')
 		{
-			newpath /= source.orig_path.filename();
+			new_path /= source.orig_path.filename();
 		}
-		if (newpath.has_parent_path())
+		if (new_path.has_parent_path())
 		{
-			const auto parent = newpath.parent_path();
+			const auto parent = new_path.parent_path();
 			if (!access->exists(parent))
 			{
 				if (dest.create_parents)
@@ -131,16 +131,16 @@ fspath make_dest_path(std::shared_ptr<i_access> access, const source& source, co
 			}
 		}
 	}
-	return newpath;
+	return new_path;
 }
 
 } // namespace
 
 void move_file(std::shared_ptr<i_access> access, source& source, const destination& dest)
 {
-	auto newpath = make_dest_path(access, source, dest);
-	access->rename(source.current_path, newpath);
-	source.current_path = newpath;
+	const auto new_path = make_dest_path(access, source, dest);
+	access->rename(source.current_path, new_path);
+	source.current_path = new_path;
 }
 
 fspath copy_file(std::shared_ptr<i_access>                       source_access,
@@ -151,9 +151,9 @@ fspath copy_file(std::shared_ptr<i_access>                       source_access,
 {
 	auto in = source_access->open(source.current_path, O_RDONLY | O_BINARY, 0);
 
-	const auto destpath = make_dest_path(dest_access, source, dest);
+	const auto dest_path = make_dest_path(dest_access, source, dest);
 
-	auto out = dest_access->open(destpath, O_WRONLY | O_CREAT | O_TRUNC | O_BINARY, source_access->stat(source.current_path).get_mode());
+	auto out = dest_access->open(dest_path, O_WRONLY | O_CREAT | O_TRUNC | O_BINARY, source_access->stat(source.current_path).get_mode());
 
 	std::array<char, 65536u> buf{};
 	std::uint64_t            bytes_copied{};
@@ -184,7 +184,7 @@ fspath copy_file(std::shared_ptr<i_access>                       source_access,
 		}
 	}
 
-	return destpath;
+	return dest_path;
 }
 
 } // namespace flexfs

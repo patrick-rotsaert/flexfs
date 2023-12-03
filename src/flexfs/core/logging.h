@@ -27,6 +27,7 @@ public:
 };
 
 } // namespace flexfs
+
 // Macro for logging using a fmtlib format string
 #undef fslog
 #define fslog(lvl, ...)                                                                                                                    \

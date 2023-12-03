@@ -8,6 +8,7 @@
 #pragma once
 
 #include "flexfs/core/attributes.h"
+#include "flexfs/core/fspath.h"
 #include "flexfs/core/api.h"
 #include <string>
 #include <optional>
@@ -17,10 +18,9 @@ namespace flexfs {
 class FLEXFS_EXPORT direntry final
 {
 public:
-	std::string name;
-	attributes  attr;
-	// FIXME: should be direntry
-	std::optional<attributes> link; // attributes of the dereferenced link, only set if attr.type == LINK and file is not a dead link
+	std::string           name;
+	attributes            attr;
+	std::optional<fspath> symlink_target;
 
 	direntry()                           = default;
 	direntry(const direntry&)            = default;

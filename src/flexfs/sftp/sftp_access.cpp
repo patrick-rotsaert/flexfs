@@ -115,12 +115,27 @@ attributes make_attributes(const sftp_attributes in)
 	return result;
 }
 
-direntry make_direntry(const sftp_attributes a)
+direntry make_direntry(const fspath& path, sftp_session sftp, const sftp_attributes a)
 {
 	assert(a != nullptr);
 	auto entry = direntry{};
 	entry.name = a->name;
 	entry.attr = make_attributes(a);
+	if (entry.attr.is_lnk())
+	{
+		fslog(trace, "sftp_readlink path={}", path);
+		const auto target = sftp_readlink(sftp, path.string().c_str());
+		if (target)
+		{
+			entry.symlink_target = target;
+			free(target);
+		}
+		else
+		{
+			FLEXFS_THROW(sftp_exception(sftp) << error_opname{ "sftp_readlink" } << error_path{ path });
+		}
+	}
+
 	return entry;
 }
 
@@ -159,7 +174,8 @@ public:
 		if (attrib)
 		{
 			sftp_attributes_ptr guard{ attrib, sftp_attributes_free };
-			return make_direntry(attrib);
+			assert(attrib->name);
+			return make_direntry(this->path_ / attrib->name, this->session_->sftp(), attrib);
 		}
 		else
 		{
@@ -207,26 +223,6 @@ public:
 		while (auto entry = dr.read())
 		{
 			this->interruptor_->throw_if_interrupted();
-			if (entry->attr.type == attributes::filetype::LINK)
-			{
-				auto path = dir / entry->name;
-				fslog(trace, "sftp_stat path={}", path);
-				const auto attrib = sftp_stat(this->session_->sftp(), path.string().c_str());
-				if (attrib)
-				{
-					const auto guard = sftp_attributes_ptr{ attrib, sftp_attributes_free };
-					entry->link      = make_attributes(attrib);
-				}
-				else
-				{
-					// stat fails with ENOENT if a dead link is encountered, which is non-critical
-					const auto err = sftp_get_error(this->session_->sftp());
-					if (err != SSH_FX_NO_SUCH_FILE)
-					{
-						FLEXFS_THROW(sftp_exception(this->session_) << error_opname{ "sftp_stat" } << error_path{ path });
-					}
-				}
-			}
 			result.push_back(std::move(entry.value()));
 		}
 		return result;
