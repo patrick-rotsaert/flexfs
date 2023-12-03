@@ -53,7 +53,6 @@ add_project_library(core
 	SOURCES
 		i_access.cpp
 		i_interruptor.cpp
-		direntry.cpp
 		attributes.cpp
 		source.cpp
 		destination.cpp
