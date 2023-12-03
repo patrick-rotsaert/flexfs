@@ -7,7 +7,6 @@
 
 #include <gtest/gtest.h>
 #include "flexfs/core/attributes.h"
-#include <cmath>
 #include <set>
 
 namespace flexfs {

@@ -7,26 +7,8 @@
 
 #include <gtest/gtest.h>
 #include "flexfs/core/destination.h"
-#include <cmath>
-#include <set>
 
 namespace flexfs {
-
-namespace {
-
-template<typename T, typename... Args>
-std::set<T> make_set(T first, Args... args)
-{
-	auto result = std::set<T>{};
-	result.insert(first);
-	if constexpr (sizeof...(args) > 0)
-	{
-		result.merge(make_set(args...));
-	}
-	return result;
-}
-
-} // namespace
 
 TEST(DestinationTests, test_ctor)
 {
