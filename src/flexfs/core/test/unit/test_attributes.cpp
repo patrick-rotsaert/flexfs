@@ -5,8 +5,8 @@
 // http://www.boost.org/LICENSE_1_0.txt)
 //
 
-#include <gtest/gtest.h>
 #include "flexfs/core/attributes.h"
+#include <gtest/gtest.h>
 #include <set>
 
 namespace flexfs {

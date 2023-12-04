@@ -5,9 +5,9 @@
 // http://www.boost.org/LICENSE_1_0.txt)
 //
 
-#include <gtest/gtest.h>
 #include "flexfs/core/exceptions.h"
 #include <boost/exception/get_error_info.hpp>
+#include <gtest/gtest.h>
 
 namespace flexfs {
 
