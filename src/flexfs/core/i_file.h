@@ -8,7 +8,7 @@
 #pragma once
 
 #include "flexfs/core/api.h"
-#include <cstdint>
+#include <cstddef>
 
 namespace flexfs {
 
