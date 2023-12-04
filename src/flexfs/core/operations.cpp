@@ -9,6 +9,8 @@
 #include "flexfs/core/logging.h"
 #include "flexfs/core/formatters.h"
 #include "flexfs/core/exceptions.h"
+#include "flexfs/core/attributes.h"
+#include "flexfs/core/i_file.h"
 #include <boost/date_time/posix_time/conversion.hpp>
 #include <boost/date_time/c_local_time_adjustor.hpp>
 #include <boost/scoped_array.hpp>

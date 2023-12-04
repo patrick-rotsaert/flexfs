@@ -9,9 +9,6 @@
 
 #include "flexfs/core/api.h"
 #include "flexfs/core/fspath.h"
-#include "flexfs/core/attributes.h"
-#include "flexfs/core/i_file.h"
-#include "flexfs/core/i_watcher.h"
 #include <boost/system/api_config.hpp>
 #include <vector>
 #include <memory>
@@ -40,6 +37,9 @@
 namespace flexfs {
 
 class direntry;
+class attributes;
+class i_file;
+class i_watcher;
 
 class FLEXFS_EXPORT i_access
 {
