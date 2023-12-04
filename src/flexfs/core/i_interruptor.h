@@ -26,7 +26,7 @@ public:
 	virtual bool is_interrupted()                                          = 0;
 	virtual bool wait_for_interruption(std::chrono::milliseconds duration) = 0; // returns true if interrupted, false on timeout
 
-	void throw_if_interrupted(); // throws interrupted_exception if interrupted()
+	void throw_if_interrupted(); // throws interrupted_exception if is_interrupted()
 };
 
 } // namespace flexfs

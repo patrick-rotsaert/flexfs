@@ -86,6 +86,7 @@ add_project_library(core
 		test/unit/test_attributes.cpp
 		test/unit/test_destination.cpp
 		test/unit/test_exceptions.cpp
+		test/unit/test_i_interruptor.cpp
 	PRIVATE_LIBRARIES
 		fmt::fmt
 		Boost::filesystem
