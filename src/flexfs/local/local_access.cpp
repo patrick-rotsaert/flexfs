@@ -7,9 +7,9 @@
 #include "flexfs/core/exceptions.h"
 
 #include <boost/filesystem/operations.hpp>
-#include <boost/date_time/posix_time/conversion.hpp>
 #include <boost/scoped_array.hpp>
 #include <optional>
+#include <chrono>
 
 //#define BOOST_STACKTRACE_USE_BACKTRACE
 #include <boost/stacktrace.hpp>
@@ -126,9 +126,19 @@ attributes make_attributes(const fspath& path, const boost::filesystem::file_sta
 		const auto mtime = boost::filesystem::last_write_time(path, ec);
 		if (!ec)
 		{
-			result.mtime = boost::posix_time::from_time_t(mtime);
+			result.mtime = std::chrono::system_clock::from_time_t(mtime);
 		}
 	}
+
+	{
+		auto       ec    = boost::system::error_code{};
+		const auto ctime = boost::filesystem::creation_time(path, ec);
+		if (!ec)
+		{
+			result.ctime = std::chrono::system_clock::from_time_t(ctime);
+		}
+	}
+
 	{
 		auto       ec   = boost::system::error_code{};
 		const auto size = boost::filesystem::file_size(path, ec);

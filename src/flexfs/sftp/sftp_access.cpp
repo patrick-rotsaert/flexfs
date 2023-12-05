@@ -7,9 +7,9 @@
 #include "flexfs/core/attributes.h"
 #include "flexfs/core/logging.h"
 #include "flexfs/core/formatters.h"
-#include <boost/date_time/posix_time/conversion.hpp>
 #include <optional>
 #include <type_traits>
+#include <chrono>
 #include <cassert>
 #include <cstddef>
 #include <libssh/sftp.h>
@@ -39,14 +39,14 @@ attributes::filetype convert_file_type(const sftp_attributes in)
 	}
 }
 
-boost::posix_time::ptime convert_file_time(uint64_t sec, uint32_t nsec)
+std::chrono::system_clock::time_point convert_file_time(uint64_t sec, uint32_t nsec)
 {
-	return boost::posix_time::from_time_t(sec) + boost::posix_time::microseconds(nsec / 1000);
+	return std::chrono::system_clock::from_time_t(static_cast<std::time_t>(sec)) + std::chrono::nanoseconds{ nsec };
 }
 
-boost::posix_time::ptime convert_file_time(uint32_t sec)
+std::chrono::system_clock::time_point convert_file_time(uint32_t sec)
 {
-	return boost::posix_time::from_time_t(sec);
+	return std::chrono::system_clock::from_time_t(static_cast<std::time_t>(sec));
 }
 
 attributes make_attributes(const sftp_attributes in)

@@ -30,9 +30,11 @@ public:
 	};
 
 	fspath                        path;
-	std::optional<time_expansion> expand_time_placeholders; // see man strftime
-	bool                          create_parents;
-	conflict_policy               on_name_conflict;
+	std::optional<time_expansion> expand_time_placeholders; // Expands time placeholders using the mtime of the source file.
+	                                                        // See https://fmt.dev/latest/syntax.html#chrono-specs
+	                                                        // The value controls if UTC or local time is used as input.
+	bool            create_parents;
+	conflict_policy on_name_conflict;
 
 	destination(const fspath&                        path,
 	            const std::optional<time_expansion>& expand_time_placeholders,

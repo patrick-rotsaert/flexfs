@@ -8,12 +8,12 @@
 #pragma once
 
 #include "flexfs/core/api.h"
-#include <boost/date_time/posix_time/ptime.hpp>
 #include <boost/system/api_config.hpp>
 #include <set>
 #include <string>
 #include <cstddef>
 #include <optional>
+#include <chrono>
 
 #include <sys/stat.h>
 
@@ -80,14 +80,14 @@ public:
 	};
 	using fileperms = std::set<fileperm>;
 
-	filetype                                type;
-	filemodes                               mode;
-	fileperms                               uperm, gperm, operm;
-	std::optional<uintmax_t>                size;
-	std::optional<uid_t>                    uid;
-	std::optional<gid_t>                    gid;
-	std::optional<std::string>              owner, group;
-	std::optional<boost::posix_time::ptime> atime, mtime, ctime;
+	filetype                                             type;
+	filemodes                                            mode;
+	fileperms                                            uperm, gperm, operm;
+	std::optional<uintmax_t>                             size;
+	std::optional<uid_t>                                 uid;
+	std::optional<gid_t>                                 gid;
+	std::optional<std::string>                           owner, group;
+	std::optional<std::chrono::system_clock::time_point> atime, mtime, ctime;
 
 	attributes()                             = default;
 	attributes(const attributes&)            = default;

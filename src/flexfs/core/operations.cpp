@@ -11,13 +11,10 @@
 #include "flexfs/core/exceptions.h"
 #include "flexfs/core/attributes.h"
 #include "flexfs/core/i_file.h"
-#include <boost/date_time/posix_time/conversion.hpp>
-#include <boost/date_time/c_local_time_adjustor.hpp>
-#include <boost/scoped_array.hpp>
 #include <fmt/format.h>
-#include <ctime>
+#include <fmt/chrono.h>
+#include <chrono>
 #include <cassert>
-#include <array>
 
 namespace flexfs {
 
@@ -35,25 +32,9 @@ fspath make_dest_path(std::shared_ptr<i_access> access, const source& source, co
 		const auto mtime = access->stat(source.current_path).mtime;
 		if (mtime)
 		{
-			using adjustor     = boost::date_time::c_local_adjustor<boost::posix_time::ptime>;
-			const auto tm      = boost::posix_time::to_tm(dest.expand_time_placeholders.value() == destination::time_expansion::LOCAL
-                                                         ? adjustor::utc_to_local(mtime.value())
-                                                         : mtime.value());
-			auto       bufsize = new_path.string().length();
-			for (;;)
-			{
-				boost::scoped_array<char> buf(new char[bufsize]);
-				const auto                length = strftime(buf.get(), bufsize, new_path.string().c_str(), &tm);
-				if (length == 0)
-				{
-					bufsize *= 2;
-				}
-				else
-				{
-					new_path = std::string(buf.get(), length);
-					break;
-				}
-			}
+			const auto tm = dest.expand_time_placeholders.value() == destination::time_expansion::LOCAL ? fmt::localtime(mtime.value())
+			                                                                                            : fmt::gmtime(mtime.value());
+			new_path      = fmt::format(fmt::runtime(new_path.string()), tm);
 		}
 		else
 		{
