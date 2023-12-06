@@ -15,7 +15,8 @@ namespace flexfs {
 class FLEXFS_EXPORT source
 {
 public:
-	fspath orig_path, current_path;
+	fspath orig_path;
+	fspath current_path; // Differs from `orig_path` after moving the file (see operations.h)
 
 	explicit source(const fspath& path);
 };

@@ -57,6 +57,8 @@ add_project_library(core
 		source.cpp
 		destination.cpp
 		operations.cpp
+		make_dest_path.cpp
+		make_dest_path.h
 		exceptions.cpp
 		i_logger.cpp
 		logging.cpp
@@ -87,6 +89,11 @@ add_project_library(core
 		test/unit/test_destination.cpp
 		test/unit/test_exceptions.cpp
 		test/unit/test_i_interruptor.cpp
+		test/unit/test_operations.cpp
+		test/unit/test_make_dest_path.cpp
+	MOCK_SOURCES
+		test/unit/mock_access.cpp
+		test/unit/mock_access.h
 	PRIVATE_LIBRARIES
 		fmt::fmt
 		Boost::filesystem

@@ -61,6 +61,10 @@ struct should_not_happen_exception : public exception
 {
 };
 
+struct invalid_argument_exception : public exception
+{
+};
+
 class system_exception : public exception
 {
 public:
