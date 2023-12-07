@@ -193,28 +193,30 @@ public:
 
 } // namespace
 
-class access::impl
+class access::impl final : public i_access, public std::enable_shared_from_this<impl>
 {
-	access&                        owner_;
 	std::shared_ptr<i_interruptor> interruptor_;
 	std::shared_ptr<session>       session_;
 	std::uint32_t                  watcher_scan_interval_ms_;
 
 public:
-	explicit impl(access&                                 owner,
-	              const options&                          opts,
+	explicit impl(const options&                          opts,
 	              std::shared_ptr<i_ssh_known_hosts>      known_hosts,
 	              std::shared_ptr<i_ssh_identity_factory> ssh_identity_factory,
 	              std::shared_ptr<i_interruptor>          interruptor)
-	    : owner_{ owner }
-	    , interruptor_{ interruptor }
+	    : interruptor_{ interruptor }
 	    , session_{ std::make_shared<session>(opts, known_hosts, ssh_identity_factory, interruptor) }
 	    , watcher_scan_interval_ms_{ opts.watcher_scan_interval_ms }
 	{
 		fslog(trace, "sftp access: host={}, port={}, user={}", opts.host, opts.port, opts.user);
 	}
 
-	std::vector<direntry> ls(const fspath& dir)
+	bool is_remote() const override
+	{
+		return true;
+	}
+
+	std::vector<direntry> ls(const fspath& dir) override
 	{
 		this->interruptor_->throw_if_interrupted();
 
@@ -228,7 +230,7 @@ public:
 		return result;
 	}
 
-	bool exists(const fspath& path)
+	bool exists(const fspath& path) override
 	{
 		this->interruptor_->throw_if_interrupted();
 
@@ -253,7 +255,7 @@ public:
 		}
 	}
 
-	std::optional<attributes> try_stat(const fspath& path)
+	std::optional<attributes> try_stat(const fspath& path) override
 	{
 		this->interruptor_->throw_if_interrupted();
 
@@ -278,7 +280,7 @@ public:
 		}
 	}
 
-	attributes stat(const fspath& path)
+	attributes stat(const fspath& path) override
 	{
 		this->interruptor_->throw_if_interrupted();
 
@@ -295,7 +297,7 @@ public:
 		}
 	}
 
-	attributes lstat(const fspath& path)
+	attributes lstat(const fspath& path) override
 	{
 		this->interruptor_->throw_if_interrupted();
 
@@ -312,7 +314,7 @@ public:
 		}
 	}
 
-	void remove(const fspath& path)
+	void remove(const fspath& path) override
 	{
 		this->interruptor_->throw_if_interrupted();
 
@@ -323,7 +325,7 @@ public:
 		}
 	}
 
-	void mkdir(const fspath& path, bool parents)
+	void mkdir(const fspath& path, bool parents) override
 	{
 		this->interruptor_->throw_if_interrupted();
 
@@ -340,7 +342,7 @@ public:
 		}
 	}
 
-	void rename(const fspath& oldpath, const fspath& newpath)
+	void rename(const fspath& oldpath, const fspath& newpath) override
 	{
 		this->interruptor_->throw_if_interrupted();
 
@@ -352,7 +354,7 @@ public:
 		}
 	}
 
-	std::shared_ptr<i_file> open(const fspath& path, int flags, mode_t mode)
+	std::unique_ptr<i_file> open(const fspath& path, int flags, mode_t mode) override
 	{
 		this->interruptor_->throw_if_interrupted();
 
@@ -365,14 +367,14 @@ public:
 		}
 		else
 		{
-			return std::make_shared<file>(fd, path, this->session_, this->interruptor_);
+			return std::make_unique<file>(fd, path, this->session_, this->interruptor_);
 		}
 	}
 
-	std::shared_ptr<i_watcher> create_watcher(const fspath& dir, int cancelfd)
+	std::shared_ptr<i_watcher> create_watcher(const fspath& dir, int cancelfd) override
 	{
 		(void)cancelfd;
-		return std::make_shared<watcher>(dir, this->watcher_scan_interval_ms_, this->owner_.shared_from_this(), this->interruptor_);
+		return std::make_shared<watcher>(dir, this->watcher_scan_interval_ms_, this->shared_from_this(), this->interruptor_);
 	}
 };
 
@@ -380,7 +382,7 @@ access::access(const options&                          opts,
                std::shared_ptr<i_ssh_known_hosts>      known_hosts,
                std::shared_ptr<i_ssh_identity_factory> ssh_identity_factory,
                std::shared_ptr<i_interruptor>          interruptor)
-    : pimpl_{ std::make_unique<impl>(*this, opts, known_hosts, ssh_identity_factory, interruptor) }
+    : pimpl_{ std::make_shared<impl>(opts, known_hosts, ssh_identity_factory, interruptor) }
 {
 }
 
@@ -390,7 +392,7 @@ access::~access() noexcept
 
 bool access::is_remote() const
 {
-	return true;
+	return this->pimpl_->is_remote();
 }
 
 std::vector<direntry> access::ls(const fspath& dir)
@@ -433,7 +435,7 @@ void access::rename(const fspath& oldpath, const fspath& newpath)
 	return this->pimpl_->rename(oldpath, newpath);
 }
 
-std::shared_ptr<i_file> access::open(const fspath& path, int flags, mode_t mode)
+std::unique_ptr<i_file> access::open(const fspath& path, int flags, mode_t mode)
 {
 	return this->pimpl_->open(path, flags, mode);
 }

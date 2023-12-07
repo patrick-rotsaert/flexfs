@@ -8,7 +8,7 @@
 namespace flexfs {
 namespace local {
 
-class FLEXFS_EXPORT file : public i_file
+class FLEXFS_EXPORT file final : public i_file
 {
 	int                            fd_;
 	fspath                         path_;

@@ -18,12 +18,12 @@
 namespace flexfs {
 
 // TODO: add documentation
-FLEXFS_EXPORT void move_file(std::shared_ptr<i_access> access, source& source, const destination& dest);
+FLEXFS_EXPORT void move_file(i_access& access, source& source, const destination& dest);
 
 // TODO: add documentation
-FLEXFS_EXPORT fspath copy_file(std::shared_ptr<i_access>                       source_access,
+FLEXFS_EXPORT fspath copy_file(i_access&                                       source_access,
                                const source&                                   source,
-                               std::shared_ptr<i_access>                       dest_access,
+                               i_access&                                       dest_access,
                                const destination&                              dest,
                                std::function<void(std::uint64_t bytes_copied)> on_progress = nullptr);
 

@@ -8,7 +8,7 @@
 namespace flexfs {
 namespace local {
 
-class FLEXFS_EXPORT watcher : public i_watcher
+class FLEXFS_EXPORT watcher final : public i_watcher
 {
 private:
 	class impl;

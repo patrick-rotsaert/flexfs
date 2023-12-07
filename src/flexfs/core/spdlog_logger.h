@@ -12,7 +12,7 @@
 
 namespace flexfs {
 
-class FLEXFS_EXPORT spdlog_logger : public i_logger
+class FLEXFS_EXPORT spdlog_logger final : public i_logger
 {
 public:
 	spdlog_logger();

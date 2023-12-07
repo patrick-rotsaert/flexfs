@@ -6,16 +6,16 @@
 namespace flexfs {
 namespace sftp {
 
-class watcher::impl
+class watcher::impl final
 {
 	fspath                          dir_;
 	std::uint32_t                   scan_interval_ms_;
-	std::shared_ptr<access>         access_;
+	std::shared_ptr<i_access>       access_;
 	std::shared_ptr<i_interruptor>  interruptor_;
 	std::map<std::string, direntry> files_;
 
 public:
-	impl(const fspath& dir, std::uint32_t scan_interval_ms, std::shared_ptr<access> access, std::shared_ptr<i_interruptor> interruptor)
+	impl(const fspath& dir, std::uint32_t scan_interval_ms, std::shared_ptr<i_access> access, std::shared_ptr<i_interruptor> interruptor)
 	    : dir_{ dir }
 	    , scan_interval_ms_{ scan_interval_ms }
 	    , access_{ access }
@@ -75,7 +75,7 @@ private:
 
 watcher::watcher(const fspath&                  dir,
                  std::uint32_t                  scan_interval_ms,
-                 std::shared_ptr<access>        access,
+                 std::shared_ptr<i_access>      access,
                  std::shared_ptr<i_interruptor> interruptor)
     : pimpl_{ std::make_unique<impl>(dir, scan_interval_ms, access, interruptor) }
 {

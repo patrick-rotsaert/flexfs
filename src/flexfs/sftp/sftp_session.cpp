@@ -192,7 +192,7 @@ public:
 
 } // namespace
 
-class session::impl
+class session::impl final
 {
 	std::shared_ptr<i_interruptor>  interruptor_;
 	ssh_session_ptr                 ssh_;

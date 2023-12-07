@@ -10,31 +10,28 @@
 #include "flexfs/core/attributes.h"
 #include "flexfs/core/i_file.h"
 #include <array>
-#include <cassert>
 
 namespace flexfs {
 
-namespace {
-} // namespace
-
-void move_file(std::shared_ptr<i_access> access, source& source, const destination& dest)
+void move_file(i_access& access, source& source, const destination& dest)
 {
 	const auto new_path = make_dest_path(access, source, access, dest);
-	access->rename(source.current_path, new_path);
+	access.rename(source.current_path, new_path);
 	source.current_path = new_path;
 }
 
-fspath copy_file(std::shared_ptr<i_access>                       source_access,
+fspath copy_file(i_access&                                       source_access,
                  const source&                                   source,
-                 std::shared_ptr<i_access>                       dest_access,
+                 i_access&                                       dest_access,
                  const destination&                              dest,
                  std::function<void(std::uint64_t bytes_copied)> on_progress)
 {
-	auto in = source_access->open(source.current_path, O_RDONLY | O_BINARY, 0);
+	auto in = source_access.open(source.current_path, O_RDONLY | O_BINARY, 0);
 
 	const auto dest_path = make_dest_path(source_access, source, dest_access, dest);
 
-	auto out = dest_access->open(dest_path, O_WRONLY | O_CREAT | O_TRUNC | O_BINARY, source_access->stat(source.current_path).get_mode());
+	auto out =
+	    dest_access.open(dest_path, O_WRONLY | O_CREAT | O_TRUNC | O_BINARY, source_access.stat(source.current_path).get_mode() & ~S_IFMT);
 
 	std::array<char, 65536u> buf{};
 	std::uint64_t            bytes_copied{};

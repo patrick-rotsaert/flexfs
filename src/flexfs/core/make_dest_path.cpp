@@ -19,10 +19,7 @@ bool path_ends_with_path_separator(const fspath& path)
 
 } // namespace
 
-fspath make_dest_path(std::shared_ptr<i_access> source_access,
-                      const source&             source,
-                      std::shared_ptr<i_access> dest_access,
-                      const destination&        dest)
+fspath make_dest_path(i_access& source_access, const source& source, i_access& dest_access, const destination& dest)
 {
 	auto new_path = dest.path;
 	if (new_path.empty())
@@ -32,7 +29,7 @@ fspath make_dest_path(std::shared_ptr<i_access> source_access,
 
 	if (dest.expand_time_placeholders)
 	{
-		const auto mtime = source_access->stat(source.current_path).mtime;
+		const auto mtime = source_access.stat(source.current_path).mtime;
 		if (mtime)
 		{
 			const auto tm = dest.expand_time_placeholders.value() == destination::time_expansion::LOCAL ? fmt::localtime(mtime.value())
@@ -48,7 +45,7 @@ fspath make_dest_path(std::shared_ptr<i_access> source_access,
 		}
 	}
 
-	auto attr = dest_access->try_stat(new_path);
+	auto attr = dest_access.try_stat(new_path);
 	if (attr)
 	{
 		auto&& resolve_name_conflict = [&]() {
@@ -64,7 +61,7 @@ fspath make_dest_path(std::shared_ptr<i_access> source_access,
 				{
 					new_path = orig.parent_path() /
 					           fmt::format("{}~{}{}", orig.filename().stem().string(), ++i, orig.filename().extension().string());
-				} while (dest_access->exists(new_path));
+				} while (dest_access.exists(new_path));
 				break;
 			}
 			case destination::conflict_policy::FAIL:
@@ -77,7 +74,7 @@ fspath make_dest_path(std::shared_ptr<i_access> source_access,
 		{
 			// new_path is a directory.
 			new_path /= source.orig_path.filename();
-			attr = dest_access->try_stat(new_path);
+			attr = dest_access.try_stat(new_path);
 			if (attr)
 			{
 				if (attr->is_dir())
@@ -115,7 +112,7 @@ fspath make_dest_path(std::shared_ptr<i_access> source_access,
 			const auto parent = new_path.parent_path();
 			if (dest.create_parents)
 			{
-				dest_access->mkdir(parent, true);
+				dest_access.mkdir(parent, true);
 			}
 			else
 			{

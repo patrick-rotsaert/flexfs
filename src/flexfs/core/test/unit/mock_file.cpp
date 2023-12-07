@@ -5,21 +5,16 @@
 // http://www.boost.org/LICENSE_1_0.txt)
 //
 
-#pragma once
-
-#include "flexfs/core/api.h"
-#include "flexfs/core/direntry.h"
-#include <vector>
-#include <memory>
+#include "mock_file.h"
 
 namespace flexfs {
 
-class FLEXFS_EXPORT i_watcher
+mock_file::mock_file()
 {
-public:
-	virtual ~i_watcher() noexcept;
+}
 
-	virtual std::vector<direntry> watch() = 0;
-};
+mock_file::~mock_file()
+{
+}
 
 } // namespace flexfs

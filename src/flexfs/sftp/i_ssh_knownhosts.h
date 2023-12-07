@@ -17,7 +17,7 @@ public:
 	};
 
 public:
-	virtual ~i_ssh_known_hosts() noexcept = default;
+	virtual ~i_ssh_known_hosts() noexcept;
 
 	virtual result verify(const std::string& host, const std::string& pubkey_hash)  = 0;
 	virtual void   persist(const std::string& host, const std::string& pubkey_hash) = 0;

@@ -27,19 +27,22 @@ endif()
 add_project_library(sftp
 	SOURCES
 		sftp_access.cpp
-		sftp_access.h
 		sftp_watcher.cpp
 		sftp_watcher.h
 		sftp_exceptions.cpp
-		sftp_exceptions.h
-		sftp_options.h
-		i_ssh_knownhosts.h
-		ssh_identity.h
-		i_ssh_identity_factory.h
+		i_ssh_knownhosts.cpp
+		i_ssh_identity_factory.cpp
 		sftp_file.cpp
 		sftp_file.h
 		sftp_session.cpp
 		sftp_session.h
+	PUBLIC_HEADERS
+		i_ssh_knownhosts.h
+		i_ssh_identity_factory.h
+		ssh_identity.h
+		sftp_access.h
+		sftp_exceptions.h
+		sftp_options.h
 	PRIVATE_INCLUDE_DIRS
 		${CMAKE_CURRENT_BINARY_DIR}/../..
 	PUBLIC_LIBRARIES

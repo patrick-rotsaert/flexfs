@@ -1,7 +1,8 @@
 #pragma once
 
-#include "flexfs/sftp/sftp_access.h"
+#include "flexfs/core/i_access.h"
 #include "flexfs/core/i_watcher.h"
+#include "flexfs/core/i_interruptor.h"
 #include "flexfs/core/fspath.h"
 #include "flexfs/core/api.h"
 #include <memory>
@@ -10,7 +11,7 @@
 namespace flexfs {
 namespace sftp {
 
-class FLEXFS_EXPORT watcher : public i_watcher
+class FLEXFS_EXPORT watcher final : public i_watcher
 {
 	class impl;
 	std::unique_ptr<impl> pimpl_;
@@ -18,7 +19,7 @@ class FLEXFS_EXPORT watcher : public i_watcher
 public:
 	explicit watcher(const fspath&                  dir,
 	                 std::uint32_t                  scan_interval_ms,
-	                 std::shared_ptr<access>        access,
+	                 std::shared_ptr<i_access>      access,
 	                 std::shared_ptr<i_interruptor> interruptor);
 	~watcher() noexcept;
 

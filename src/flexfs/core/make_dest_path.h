@@ -15,9 +15,6 @@
 
 namespace flexfs {
 
-FLEXFS_LOCAL fspath make_dest_path(std::shared_ptr<i_access> source_access,
-                                   const source&             source,
-                                   std::shared_ptr<i_access> dest_access,
-                                   const destination&        dest);
+FLEXFS_LOCAL fspath make_dest_path(i_access& source_access, const source& source, i_access& dest_access, const destination& dest);
 
 } // namespace flexfs

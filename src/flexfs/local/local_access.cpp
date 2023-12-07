@@ -202,10 +202,10 @@ std::vector<direntry> access::ls(const fspath& dir)
 {
 	this->interruptor_->throw_if_interrupted();
 	auto result = std::vector<direntry>{};
-	for (boost::filesystem::directory_iterator it(dir), end; it != end; ++it)
+	for (const auto& entry : boost::filesystem::directory_iterator{ dir })
 	{
 		this->interruptor_->throw_if_interrupted();
-		result.push_back(make_direntry(*it));
+		result.push_back(make_direntry(entry));
 	}
 	return result;
 }
@@ -319,7 +319,7 @@ void access::rename(const fspath& oldpath, const fspath& newpath)
 	}
 }
 
-std::shared_ptr<i_file> access::open(const fspath& path, int flags, mode_t mode)
+std::unique_ptr<i_file> access::open(const fspath& path, int flags, mode_t mode)
 {
 	this->interruptor_->throw_if_interrupted();
 
@@ -332,7 +332,7 @@ std::shared_ptr<i_file> access::open(const fspath& path, int flags, mode_t mode)
 	}
 	else
 	{
-		return std::make_shared<file>(fd, path, this->interruptor_);
+		return std::make_unique<file>(fd, path, this->interruptor_);
 	}
 }
 

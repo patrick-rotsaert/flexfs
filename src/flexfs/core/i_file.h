@@ -15,7 +15,7 @@ namespace flexfs {
 class FLEXFS_EXPORT i_file
 {
 public:
-	virtual ~i_file() noexcept = default;
+	virtual ~i_file() noexcept;
 
 	virtual std::size_t read(void* buf, std::size_t count)        = 0;
 	virtual std::size_t write(const void* buf, std::size_t count) = 0;

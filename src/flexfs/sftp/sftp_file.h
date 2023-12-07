@@ -11,7 +11,7 @@
 namespace flexfs {
 namespace sftp {
 
-class FLEXFS_EXPORT file : public i_file
+class FLEXFS_EXPORT file final : public i_file
 {
 	sftp_file                      fd_;
 	fspath                         path_;

@@ -5,21 +5,17 @@
 // http://www.boost.org/LICENSE_1_0.txt)
 //
 
-#pragma once
-
-#include "flexfs/core/api.h"
-#include "flexfs/core/direntry.h"
-#include <vector>
-#include <memory>
+#include "flexfs/core/source.h"
+#include <gtest/gtest.h>
 
 namespace flexfs {
 
-class FLEXFS_EXPORT i_watcher
+TEST(SourceTests, test_ctor)
 {
-public:
-	virtual ~i_watcher() noexcept;
-
-	virtual std::vector<direntry> watch() = 0;
-};
+	const auto p   = fspath{ "foo" };
+	const auto src = source{ p };
+	EXPECT_EQ(src.orig_path, p);
+	EXPECT_EQ(src.orig_path, src.current_path);
+}
 
 } // namespace flexfs

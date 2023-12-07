@@ -5,54 +5,12 @@
 # http://www.boost.org/LICENSE_1_0.txt)
 #
 
-if(    TARGET Boost::system
-   AND TARGET Boost::filesystem
-   AND TARGET Boost::date_time
-   )
-	message(TRACE "Boost targets already defined")
-else()
-	find_package(Boost REQUIRED COMPONENTS system filesystem date_time)
-endif()
-
-include(FetchContent)
-
-# {fmtlib}
-# If this project is included as a subdirectory, the fmt::fmt target may already be defined.
-if(NOT TARGET fmt::fmt)
-	# Prefer the system package
-	find_package(fmt QUIET)
-	if(NOT fmt_FOUND)
-		set(FMT_INSTALL "${${PROJECT_NAME_UC}_INSTALL}")
-		FetchContent_Declare(fmt
-		  GIT_REPOSITORY https://github.com/fmtlib/fmt.git
-		  GIT_TAG 10.0.0
-		)
-		FetchContent_MakeAvailable(fmt)
-	endif()
-endif()
-
-# spdlog
-if(${PROJECT_NAME_UC}_USE_SPDLOG)
-	# If this project is included as a subdirectory, the spdlog::spdlog target may already be defined.
-	if(NOT TARGET spdlog::spdlog)
-		# Prefer the system package
-		find_package(spdlog QUIET)
-		if(NOT spdlog_FOUND)
-			set(SPDLOG_FMT_EXTERNAL ON)
-			set(SPDLOG_INSTALL "${${PROJECT_NAME_UC}_INSTALL}")
-			FetchContent_Declare(spdlog
-			  GIT_REPOSITORY https://github.com/gabime/spdlog.git
-			  GIT_TAG v1.12.0
-			)
-			FetchContent_MakeAvailable(spdlog)
-		endif()
-	endif()
-endif()
-
 add_project_library(core
 	SOURCES
 		i_access.cpp
 		i_interruptor.cpp
+		i_file.cpp
+		i_watcher.cpp
 		attributes.cpp
 		source.cpp
 		destination.cpp
@@ -60,6 +18,7 @@ add_project_library(core
 		make_dest_path.cpp
 		make_dest_path.h
 		exceptions.cpp
+		noop_interruptor.cpp
 		i_logger.cpp
 		logging.cpp
 		formatters.h
@@ -80,6 +39,7 @@ add_project_library(core
 		destination.h
 		operations.h
 		i_file.h
+		noop_interruptor.h
 		exceptions.h
 		log_level.h
 		i_logger.h
@@ -89,14 +49,18 @@ add_project_library(core
 		test/unit/test_destination.cpp
 		test/unit/test_exceptions.cpp
 		test/unit/test_i_interruptor.cpp
-		test/unit/test_operations.cpp
 		test/unit/test_make_dest_path.cpp
+		test/unit/test_operations.cpp
+		test/unit/test_source.cpp
 	MOCK_SOURCES
 		test/unit/mock_access.cpp
 		test/unit/mock_access.h
+		test/unit/mock_file.cpp
+		test/unit/mock_file.h
+	PUBLIC_LIBRARIES
+		Boost::filesystem
 	PRIVATE_LIBRARIES
 		fmt::fmt
-		Boost::filesystem
 )
 
 if(TARGET spdlog::spdlog)

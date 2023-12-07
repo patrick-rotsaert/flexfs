@@ -136,7 +136,7 @@ std::string describe_flags(uint32_t mask)
 //    The a+b events for both cases always seem to come in the same message and consecutively.
 //    We'll rely on this behavior.
 
-class watcher::impl
+class watcher::impl final
 {
 	fspath dir_;
 	int    cancelfd_;

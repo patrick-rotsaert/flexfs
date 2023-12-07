@@ -11,7 +11,7 @@ namespace sftp {
 class FLEXFS_EXPORT i_ssh_identity_factory
 {
 public:
-	virtual ~i_ssh_identity_factory() noexcept = default;
+	virtual ~i_ssh_identity_factory() noexcept;
 
 	virtual std::vector<std::shared_ptr<ssh_identity>> create() = 0;
 };

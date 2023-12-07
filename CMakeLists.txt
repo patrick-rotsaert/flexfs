@@ -44,6 +44,7 @@ include(cmake/paths.cmake)
 include(cmake/version.cmake)
 include(cmake/gtest.cmake)
 include(cmake/functions.cmake)
+include(cmake/deps.cmake)
 
 add_subdirectory(src)
 

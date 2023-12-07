@@ -11,7 +11,7 @@
 
 #include <mutex>
 
-class example_logger : public flexfs::i_logger
+class example_logger final : public flexfs::i_logger
 {
 	std::mutex mutex_;
 

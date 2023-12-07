@@ -8,6 +8,7 @@
 #pragma once
 
 #include "flexfs/core/i_access.h"
+#include "flexfs/core/i_file.h"
 #include "flexfs/core/attributes.h"
 #include "flexfs/core/direntry.h"
 #include <gmock/gmock.h>
@@ -29,7 +30,7 @@ public:
 	MOCK_METHOD(void, remove, (const fspath& path), (override));
 	MOCK_METHOD(void, mkdir, (const fspath& path, bool parents), (override));
 	MOCK_METHOD(void, rename, (const fspath& oldpath, const fspath& newpath), (override));
-	MOCK_METHOD(std::shared_ptr<i_file>, open, (const fspath& path, int flags, mode_t mode), (override));
+	MOCK_METHOD(std::unique_ptr<i_file>, open, (const fspath& path, int flags, mode_t mode), (override));
 	MOCK_METHOD(std::shared_ptr<i_watcher>, create_watcher, (const fspath& dir, int cancelfd), (override));
 };
 
