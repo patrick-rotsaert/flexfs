@@ -46,16 +46,17 @@ class FLEXFS_EXPORT i_access
 public:
 	virtual ~i_access() noexcept;
 
-	virtual bool                      is_remote() const                                    = 0;
-	virtual std::vector<direntry>     ls(const fspath& dir)                                = 0;
-	virtual bool                      exists(const fspath& path)                           = 0;
-	virtual std::optional<attributes> try_stat(const fspath& path)                         = 0;
-	virtual attributes                stat(const fspath& path)                             = 0;
-	virtual attributes                lstat(const fspath& path)                            = 0;
-	virtual void                      remove(const fspath& path)                           = 0;
-	virtual void                      mkdir(const fspath& path, bool parents)              = 0;
-	virtual void                      rename(const fspath& oldpath, const fspath& newpath) = 0;
-	virtual std::unique_ptr<i_file>   open(const fspath& path, int flags, mode_t mode)     = 0;
+	virtual bool                      is_remote() const            = 0;
+	virtual std::vector<direntry>     ls(const fspath& dir)        = 0;
+	virtual bool                      exists(const fspath& path)   = 0;
+	virtual std::optional<attributes> try_stat(const fspath& path) = 0;
+	virtual attributes                stat(const fspath& path)     = 0;
+	// FIXME: add try_lstat
+	virtual attributes              lstat(const fspath& path)                            = 0;
+	virtual void                    remove(const fspath& path)                           = 0; // if exists(path), it is removed
+	virtual void                    mkdir(const fspath& path, bool parents)              = 0;
+	virtual void                    rename(const fspath& oldpath, const fspath& newpath) = 0;
+	virtual std::unique_ptr<i_file> open(const fspath& path, int flags, mode_t mode)     = 0;
 
 	/// @brief Create a directory watcher.
 	/// The caller must provide a file descriptor @a cancelfd that the implementation can

@@ -7,6 +7,7 @@
 
 #include "flexfs/core/attributes.h"
 #include <optional>
+#include <tuple>
 #include <sys/types.h>
 #include <sys/stat.h>
 
@@ -140,6 +141,11 @@ mode_t convert_file_perm(const attributes::fileperms& perm, mode_t r, mode_t w, 
 	return mode;
 }
 
+auto as_tuple(const attributes& a)
+{
+	return std::make_tuple(a.type, a.mode, a.uperm, a.gperm, a.operm, a.size, a.uid, a.gid, a.owner, a.group, a.atime, a.mtime, a.ctime);
+}
+
 } // namespace
 
 bool attributes::is_dir() const
@@ -251,6 +257,11 @@ std::optional<std::string> attributes::group_or_gid() const
 	{
 		return std::nullopt;
 	}
+}
+
+bool attributes::operator==(const attributes& rhs) const
+{
+	return as_tuple(*this) == as_tuple(rhs);
 }
 
 } // namespace flexfs

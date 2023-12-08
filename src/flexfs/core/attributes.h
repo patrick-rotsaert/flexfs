@@ -104,6 +104,8 @@ public:
 	std::string                mode_string() const;
 	std::optional<std::string> owner_or_uid() const;
 	std::optional<std::string> group_or_gid() const;
+
+	bool operator==(const attributes& rhs) const;
 };
 
 } // namespace flexfs

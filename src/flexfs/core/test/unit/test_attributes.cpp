@@ -310,4 +310,87 @@ TEST(AttributesTests, test_group_or_gid)
 	EXPECT_EQ(a.group_or_gid(), std::nullopt);
 }
 
+TEST(AttributesTests, test_equality_operator)
+{
+	auto a1 = attributes{};
+	a1.type = attributes::filetype::FILE;
+	a1.mode.insert(attributes::filemode::SET_UID);
+	a1.uperm.insert(attributes::fileperm::READ);
+	a1.gperm.insert(attributes::fileperm::WRITE);
+	a1.operm.insert(attributes::fileperm::EXEC);
+	a1.size  = 42;
+	a1.uid   = 1000;
+	a1.gid   = 100;
+	a1.owner = "me";
+	a1.group = "users";
+	a1.atime = std::chrono::system_clock::now();
+	a1.mtime = std::chrono::system_clock::now();
+	a1.ctime = std::chrono::system_clock::now();
+
+	{
+		auto a2 = a1;
+		EXPECT_EQ(a1, a2);
+	}
+	{
+		auto a2 = a1;
+		a2.type = attributes::filetype::DIR;
+		EXPECT_FALSE(a1 == a2);
+	}
+	{
+		auto a2 = a1;
+		a2.mode.clear();
+		EXPECT_FALSE(a1 == a2);
+	}
+	{
+		auto a2 = a1;
+		a2.uperm.clear();
+		EXPECT_FALSE(a1 == a2);
+	}
+	{
+		auto a2 = a1;
+		a2.gperm.clear();
+		EXPECT_FALSE(a1 == a2);
+	}
+	{
+		auto a2 = a1;
+		a2.operm.clear();
+		EXPECT_FALSE(a1 == a2);
+	}
+	{
+		auto a2 = a1;
+		a2.uid  = std::nullopt;
+		EXPECT_FALSE(a1 == a2);
+	}
+	{
+		auto a2 = a1;
+		a2.gid  = std::nullopt;
+		EXPECT_FALSE(a1 == a2);
+	}
+	{
+		auto a2  = a1;
+		a2.owner = std::nullopt;
+		EXPECT_FALSE(a1 == a2);
+	}
+	{
+		auto a2  = a1;
+		a2.group = std::nullopt;
+		EXPECT_FALSE(a1 == a2);
+	}
+	{
+		auto a2  = a1;
+		a2.atime = std::nullopt;
+		EXPECT_FALSE(a1 == a2);
+	}
+	{
+		auto a2  = a1;
+		a2.mtime = std::nullopt;
+		EXPECT_FALSE(a1 == a2);
+	}
+	{
+		auto a2  = a1;
+		a2.ctime = std::nullopt;
+		EXPECT_FALSE(a1 == a2);
+	}
+}
+
 } // namespace flexfs
