@@ -1,3 +1,10 @@
+#
+# Copyright (C) 2023 Patrick Rotsaert
+# Distributed under the Boost Software License, Version 1.0.
+# (See accompanying file LICENSE or copy at
+# http://www.boost.org/LICENSE_1_0.txt)
+#
+
 # libssh
 # If this project is included as a subdirectory, the ssh::ssh target may already be defined.
 if(NOT TARGET ssh::ssh)
@@ -26,6 +33,8 @@ endif()
 
 add_project_library(sftp
 	SOURCES
+		i_ssh_api.cpp
+		i_ssh_api.h
 		sftp_access.cpp
 		sftp_watcher.cpp
 		sftp_watcher.h
