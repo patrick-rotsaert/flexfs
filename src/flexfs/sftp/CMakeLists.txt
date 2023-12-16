@@ -35,6 +35,8 @@ add_project_library(sftp
 	SOURCES
 		i_ssh_api.cpp
 		i_ssh_api.h
+		ssh_api.cpp
+		ssh_api.h
 		sftp_access.cpp
 		sftp_watcher.cpp
 		sftp_watcher.h
@@ -45,6 +47,17 @@ add_project_library(sftp
 		sftp_file.h
 		sftp_session.cpp
 		sftp_session.h
+		ssh_connection.cpp
+		ssh_connection.h
+		ssh_server_pubkey.cpp
+		ssh_server_pubkey.h
+		ssh_pubkey_hash.cpp
+		ssh_pubkey_hash.h
+		ssh_private_key.cpp
+		ssh_private_key.h
+		ssh_public_key.cpp
+		ssh_public_key.h
+		ptr_types.h
 	PUBLIC_HEADERS
 		i_ssh_knownhosts.h
 		i_ssh_identity_factory.h

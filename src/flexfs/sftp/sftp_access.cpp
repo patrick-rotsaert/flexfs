@@ -10,6 +10,7 @@
 #include "flexfs/sftp/sftp_file.h"
 #include "flexfs/sftp/sftp_watcher.h"
 #include "flexfs/sftp/sftp_session.h"
+#include "flexfs/sftp/ssh_api.h"
 #include "flexfs/core/direntry.h"
 #include "flexfs/core/attributes.h"
 #include "flexfs/core/logging.h"
@@ -122,7 +123,7 @@ attributes make_attributes(const sftp_attributes in)
 	return result;
 }
 
-direntry make_direntry(const fspath& path, sftp_session sftp, const sftp_attributes a)
+direntry make_direntry(i_ssh_api* api, const fspath& path, sftp_session sftp, const sftp_attributes a)
 {
 	assert(a != nullptr);
 	auto entry = direntry{};
@@ -131,7 +132,7 @@ direntry make_direntry(const fspath& path, sftp_session sftp, const sftp_attribu
 	if (entry.attr.is_lnk())
 	{
 		fslog(trace, "sftp_readlink path={}", path);
-		const auto target = sftp_readlink(sftp, path.string().c_str());
+		const auto target = api->sftp_readlink(sftp, path.string().c_str());
 		if (target)
 		{
 			entry.symlink_target = target;
@@ -148,18 +149,20 @@ direntry make_direntry(const fspath& path, sftp_session sftp, const sftp_attribu
 
 class directory_reader
 {
+	i_ssh_api*               api_;
 	std::shared_ptr<session> session_;
 	fspath                   path_;
 	sftp_dir                 dir_;
 	struct dirent*           entry_;
 
 public:
-	explicit directory_reader(std::shared_ptr<session> session, const fspath& path)
-	    : session_{ session }
+	explicit directory_reader(i_ssh_api* api, std::shared_ptr<session> session, const fspath& path)
+	    : api_{ api }
+	    , session_{ session }
 	    , path_{ path }
 	{
 		fslog(trace, "sftp_opendir path={}", path);
-		this->dir_ = sftp_opendir(session->sftp(), path.string().c_str());
+		this->dir_ = this->api_->sftp_opendir(session->sftp(), path.string().c_str());
 		fslog(trace, "dir {}", fmt::ptr(this->dir_));
 
 		if (!this->dir_)
@@ -171,22 +174,22 @@ public:
 	~directory_reader() noexcept
 	{
 		fslog(trace, "sftp_closedir {}", fmt::ptr(this->dir_));
-		sftp_closedir(this->dir_);
+		this->api_->sftp_closedir(this->dir_);
 	}
 
 	std::optional<direntry> read()
 	{
 		fslog(trace, "sftp_readdir {}", fmt::ptr(this->dir_));
-		const auto attrib = sftp_readdir(this->session_->sftp(), this->dir_);
+		const auto attrib = this->api_->sftp_readdir(this->session_->sftp(), this->dir_);
 		if (attrib)
 		{
-			sftp_attributes_ptr guard{ attrib, sftp_attributes_free };
+			const auto guard = sftp_attributes_ptr{ attrib, [this](auto a) { this->api_->sftp_attributes_free(a); } };
 			assert(attrib->name);
-			return make_direntry(this->path_ / attrib->name, this->session_->sftp(), attrib);
+			return make_direntry(this->api_, this->path_ / attrib->name, this->session_->sftp(), attrib);
 		}
 		else
 		{
-			if (sftp_dir_eof(this->dir_))
+			if (this->api_->sftp_dir_eof(this->dir_))
 			{
 				return std::nullopt;
 			}
@@ -202,20 +205,24 @@ public:
 
 class access::impl final : public i_access, public std::enable_shared_from_this<impl>
 {
+	i_ssh_api*                     api_;
 	std::shared_ptr<i_interruptor> interruptor_;
 	std::shared_ptr<session>       session_;
 	std::uint32_t                  watcher_scan_interval_ms_;
 
 public:
-	explicit impl(const options&                          opts,
+	explicit impl(i_ssh_api*                              api,
+	              const options&                          opts,
 	              std::shared_ptr<i_ssh_known_hosts>      known_hosts,
 	              std::shared_ptr<i_ssh_identity_factory> ssh_identity_factory,
 	              std::shared_ptr<i_interruptor>          interruptor)
-	    : interruptor_{ interruptor }
-	    , session_{ std::make_shared<session>(opts, known_hosts, ssh_identity_factory, interruptor) }
+	    : api_{ api }
+	    , interruptor_{ interruptor }
+	    , session_{ std::make_shared<session>(api, opts, known_hosts, ssh_identity_factory, interruptor) }
 	    , watcher_scan_interval_ms_{ opts.watcher_scan_interval_ms }
 	{
 		fslog(trace, "sftp access: host={}, port={}, user={}", opts.host, opts.port, opts.user);
+		(void)this->api_;
 	}
 
 	bool is_remote() const override
@@ -228,7 +235,7 @@ public:
 		this->interruptor_->throw_if_interrupted();
 
 		auto result = std::vector<direntry>{};
-		auto dr     = directory_reader{ this->session_, dir };
+		auto dr     = directory_reader{ this->api_, this->session_, dir };
 		while (auto entry = dr.read())
 		{
 			this->interruptor_->throw_if_interrupted();
@@ -242,15 +249,15 @@ public:
 		this->interruptor_->throw_if_interrupted();
 
 		fslog(trace, "sftp_stat path={}", path);
-		const auto attrib = sftp_stat(this->session_->sftp(), path.string().c_str());
+		const auto attrib = this->api_->sftp_stat(this->session_->sftp(), path.string().c_str());
 		if (attrib)
 		{
-			sftp_attributes_free(attrib);
+			this->api_->sftp_attributes_free(attrib);
 			return true;
 		}
 		else
 		{
-			int err = sftp_get_error(this->session_->sftp());
+			const auto err = this->api_->sftp_get_error(this->session_->sftp());
 			if (err == SSH_FX_NO_SUCH_FILE)
 			{
 				return false;
@@ -267,15 +274,15 @@ public:
 		this->interruptor_->throw_if_interrupted();
 
 		fslog(trace, "sftp_stat path={}", path);
-		const auto attrib = sftp_stat(this->session_->sftp(), path.string().c_str());
+		const auto attrib = this->api_->sftp_stat(this->session_->sftp(), path.string().c_str());
 		if (attrib)
 		{
-			const auto guard = sftp_attributes_ptr{ attrib, sftp_attributes_free };
+			const auto guard = sftp_attributes_ptr{ attrib, [this](auto a) { this->api_->sftp_attributes_free(a); } };
 			return make_attributes(attrib);
 		}
 		else
 		{
-			const auto err = sftp_get_error(this->session_->sftp());
+			const auto err = this->api_->sftp_get_error(this->session_->sftp());
 			if (err == SSH_FX_NO_SUCH_FILE)
 			{
 				return std::nullopt;
@@ -292,10 +299,10 @@ public:
 		this->interruptor_->throw_if_interrupted();
 
 		fslog(trace, "sftp_stat path={}", path);
-		const auto attrib = sftp_stat(this->session_->sftp(), path.string().c_str());
+		const auto attrib = this->api_->sftp_stat(this->session_->sftp(), path.string().c_str());
 		if (attrib)
 		{
-			const auto guard = sftp_attributes_ptr{ attrib, sftp_attributes_free };
+			const auto guard = sftp_attributes_ptr{ attrib, [this](auto a) { this->api_->sftp_attributes_free(a); } };
 			return make_attributes(attrib);
 		}
 		else
@@ -309,10 +316,10 @@ public:
 		this->interruptor_->throw_if_interrupted();
 
 		fslog(trace, "sftp_lstat path={}", path);
-		const auto attrib = sftp_lstat(this->session_->sftp(), path.string().c_str());
+		const auto attrib = this->api_->sftp_lstat(this->session_->sftp(), path.string().c_str());
 		if (attrib)
 		{
-			const auto guard = sftp_attributes_ptr{ attrib, sftp_attributes_free };
+			const auto guard = sftp_attributes_ptr{ attrib, [this](auto a) { this->api_->sftp_attributes_free(a); } };
 			return make_attributes(attrib);
 		}
 		else
@@ -326,7 +333,7 @@ public:
 		this->interruptor_->throw_if_interrupted();
 
 		fslog(trace, "sftp_unlink path={}", path);
-		if (sftp_unlink(this->session_->sftp(), path.string().c_str()) < 0)
+		if (this->api_->sftp_unlink(this->session_->sftp(), path.string().c_str()) < 0)
 		{
 			FLEXFS_THROW(sftp_exception(this->session_) << error_opname{ "sftp_unlink" } << error_path{ path });
 		}
@@ -337,9 +344,9 @@ public:
 		this->interruptor_->throw_if_interrupted();
 
 		fslog(trace, "sftp_mkdir path={}", path);
-		if (sftp_mkdir(this->session_->sftp(), path.string().c_str(), 0777) < 0)
+		if (this->api_->sftp_mkdir(this->session_->sftp(), path.string().c_str(), 0777) < 0)
 		{
-			if (parents && path.has_parent_path() && sftp_get_error(this->session_->sftp()) == SSH_FX_NO_SUCH_FILE)
+			if (parents && path.has_parent_path() && this->api_->sftp_get_error(this->session_->sftp()) == SSH_FX_NO_SUCH_FILE)
 			{
 				this->mkdir(path.parent_path(), true);
 				this->mkdir(path, false);
@@ -354,7 +361,7 @@ public:
 		this->interruptor_->throw_if_interrupted();
 
 		fslog(trace, "sftp_rename oldpath={} newpath={}", oldpath, newpath);
-		if (sftp_rename(this->session_->sftp(), oldpath.string().c_str(), newpath.string().c_str()) < 0)
+		if (this->api_->sftp_rename(this->session_->sftp(), oldpath.string().c_str(), newpath.string().c_str()) < 0)
 		{
 			FLEXFS_THROW(sftp_exception(this->session_)
 			             << error_opname{ "sftp_rename" } << error_oldpath{ oldpath } << error_newpath{ newpath });
@@ -366,7 +373,7 @@ public:
 		this->interruptor_->throw_if_interrupted();
 
 		fslog(trace, "sftp_open path={} flags={:o} mode={:o}", path, flags, mode);
-		const auto fd = sftp_open(this->session_->sftp(), path.string().c_str(), flags, mode);
+		const auto fd = this->api_->sftp_open(this->session_->sftp(), path.string().c_str(), flags, mode);
 		fslog(trace, "fd {}", static_cast<void*>(fd));
 		if (fd == nullptr)
 		{
@@ -374,7 +381,7 @@ public:
 		}
 		else
 		{
-			return std::make_unique<file>(fd, path, this->session_, this->interruptor_);
+			return std::make_unique<file>(this->api_, fd, path, this->session_, this->interruptor_);
 		}
 	}
 
@@ -385,11 +392,24 @@ public:
 	}
 };
 
+namespace {
+ssh_api g_api;
+}
+
 access::access(const options&                          opts,
                std::shared_ptr<i_ssh_known_hosts>      known_hosts,
                std::shared_ptr<i_ssh_identity_factory> ssh_identity_factory,
                std::shared_ptr<i_interruptor>          interruptor)
-    : pimpl_{ std::make_shared<impl>(opts, known_hosts, ssh_identity_factory, interruptor) }
+    : pimpl_{ std::make_shared<impl>(&g_api, opts, known_hosts, ssh_identity_factory, interruptor) }
+{
+}
+
+access::access(i_ssh_api&                              api,
+               const options&                          opts,
+               std::shared_ptr<i_ssh_known_hosts>      known_hosts,
+               std::shared_ptr<i_ssh_identity_factory> ssh_identity_factory,
+               std::shared_ptr<i_interruptor>          interruptor)
+    : pimpl_{ std::make_shared<impl>(&api, opts, known_hosts, ssh_identity_factory, interruptor) }
 {
 }
 

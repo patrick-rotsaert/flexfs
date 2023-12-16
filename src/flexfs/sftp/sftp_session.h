@@ -8,6 +8,7 @@
 #pragma once
 
 #include "flexfs/sftp/sftp_options.h"
+#include "flexfs/sftp/i_ssh_api.h"
 #include "flexfs/sftp/i_ssh_knownhosts.h"
 #include "flexfs/sftp/i_ssh_identity_factory.h"
 #include "flexfs/core/i_interruptor.h"
@@ -25,7 +26,8 @@ class FLEXFS_EXPORT session
 	std::unique_ptr<impl> pimpl_;
 
 public:
-	explicit session(const options&                          opts,
+	explicit session(i_ssh_api*                              api,
+	                 const options&                          opts,
 	                 std::shared_ptr<i_ssh_known_hosts>      known_hosts,
 	                 std::shared_ptr<i_ssh_identity_factory> ssh_identity_factory,
 	                 std::shared_ptr<i_interruptor>          interruptor);

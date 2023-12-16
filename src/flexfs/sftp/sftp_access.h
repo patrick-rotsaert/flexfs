@@ -19,6 +19,8 @@
 namespace flexfs {
 namespace sftp {
 
+class i_ssh_api;
+
 class FLEXFS_EXPORT access final : public i_access, public std::enable_shared_from_this<access>
 {
 	class impl;
@@ -26,6 +28,11 @@ class FLEXFS_EXPORT access final : public i_access, public std::enable_shared_fr
 
 public:
 	explicit access(const options&                          opts,
+	                std::shared_ptr<i_ssh_known_hosts>      known_hosts,
+	                std::shared_ptr<i_ssh_identity_factory> ssh_identity_factory,
+	                std::shared_ptr<i_interruptor>          interruptor);
+	explicit access(i_ssh_api&                              api,
+	                const options&                          opts,
 	                std::shared_ptr<i_ssh_known_hosts>      known_hosts,
 	                std::shared_ptr<i_ssh_identity_factory> ssh_identity_factory,
 	                std::shared_ptr<i_interruptor>          interruptor);

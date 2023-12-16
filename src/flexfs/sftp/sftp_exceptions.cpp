@@ -52,7 +52,7 @@ ssh_exception::ssh_exception(ssh_session session)
 }
 
 sftp_exception::sftp_exception(ssh_session ssh, sftp_session sftp)
-    : ssh_exception(ssh)
+    : ssh_exception{ ssh }
 {
 	const auto err = sftp_get_error(sftp);
 	*this << sftp_error_code(err);
@@ -68,7 +68,7 @@ sftp_exception::sftp_exception(sftp_session sftp)
 }
 
 sftp_exception::sftp_exception(std::shared_ptr<session> session)
-    : ssh_exception(session->ssh())
+    : ssh_exception{ session->ssh() }
 {
 	const auto err = sftp_get_error(session->sftp());
 	*this << sftp_error_code(err);

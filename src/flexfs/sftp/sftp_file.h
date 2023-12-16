@@ -8,6 +8,7 @@
 #pragma once
 
 #include "flexfs/sftp/sftp_session.h"
+#include "flexfs/sftp/i_ssh_api.h"
 #include "flexfs/core/i_file.h"
 #include "flexfs/core/i_interruptor.h"
 #include "flexfs/core/fspath.h"
@@ -20,13 +21,18 @@ namespace sftp {
 
 class FLEXFS_EXPORT file final : public i_file
 {
+	i_ssh_api*                     api_;
 	sftp_file                      fd_;
 	fspath                         path_;
 	std::shared_ptr<session>       session_;
 	std::shared_ptr<i_interruptor> interruptor_;
 
 public:
-	explicit file(sftp_file fd, const fspath& path, std::shared_ptr<session> session, std::shared_ptr<i_interruptor> interruptor);
+	explicit file(i_ssh_api*                     api,
+	              sftp_file                      fd,
+	              const fspath&                  path,
+	              std::shared_ptr<session>       session,
+	              std::shared_ptr<i_interruptor> interruptor);
 	~file() noexcept;
 
 	std::size_t read(void* buf, std::size_t count) override;
